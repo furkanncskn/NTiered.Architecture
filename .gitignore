@@ -1,0 +1,9 @@
+# vs-code files
+.vs/
+
+# debug files
+bin/
+obj
+
+# extension
+*.editorconfig
