@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace SS.DataAccessLayer.Concrete
 {
-    public class DataAccess<T> : IDataAccess<T> where T : class, new()
+    public class DataAccess: IDataAccess
     {
         public void AddSqlParameter(SqlCommand command, string name, ParameterDirection direction, SqlDbType type, object value)
         {
@@ -29,26 +29,10 @@ namespace SS.DataAccessLayer.Concrete
 
         public SqlCommand CreateCommand(CommandType type, SqlConnection connection)
         {
-            try
-            {
-                SqlCommand command = new SqlCommand()
-                {
-                    CommandType = type,
-                    Connection = connection
-                };
-
-                if (command == null)
-                    throw new Exception();
-                
-                return command;
-            }
-            catch
-            {
-                return new SqlCommand();
-            }
+            return CreateCommand(type, connection, null);
         }
 
-        public SqlCommand CreateCommand(CommandType type, string commandText, SqlConnection connection)
+        public SqlCommand CreateCommand(CommandType type, SqlConnection connection, string commandText = null)
         {
             try
             {
@@ -98,11 +82,6 @@ namespace SS.DataAccessLayer.Concrete
             return ToDataTable(connectionString, query, type, parameters);
         }
 
-        public List<T> ListFromQuery(string connectionString, string query, CommandType type, params object[] parameters)
-        {
-            return ToListFromDataTable(ToDataTable(connectionString, query, type, parameters));
-        }
-
         public object ToScalerValue(string connectionString, string query, CommandType type, params object[] parameters)
         {
             try
@@ -126,44 +105,6 @@ namespace SS.DataAccessLayer.Concrete
             catch
             {
                 return new object();
-            }
-        }
-
-        public List<T> ToListFromDataTable(DataTable table)
-        {
-            if (!Util.IsValidTable(table))
-            {
-                return new List<T>();
-            }
-
-            try
-            {
-                List<T> list = new List<T>();
-
-                Type type = typeof(T);
-                
-                PropertyInfo[] properties = type.GetProperties();
-
-                foreach (DataRow row in table.Rows)
-                {
-                    T instance = new T();
-                    foreach (PropertyInfo property in properties)
-                    {
-                        object value = System.Convert.ChangeType(
-                                   row[property.Name],
-                                   property.PropertyType
-                               );
-
-                        property.SetValue(instance, value, null);
-                    }
-                    list.Add(instance);
-                }
-
-                return list;
-            }
-            catch
-            {
-                return new List<T>();
             }
         }
 
