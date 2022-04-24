@@ -57,5 +57,10 @@ namespace SS.WinForm.UI
 
             update.ShowDialog();
         }
+
+        private void dataGridView1_DataSourceChanged(object sender, EventArgs e)
+        {
+            dataGridView1.Columns["USER_ID"].Visible = false;
+        }
     }
 }
