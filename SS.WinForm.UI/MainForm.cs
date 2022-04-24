@@ -30,7 +30,7 @@ namespace SS.WinForm.UI
 
         private void btnGetCount_Click(object sender, EventArgs e)
         {
-            txtSumQueryCount.Text = ((int)DBProvider.DB.ToScalerValue(
+            txtSumQueryCount.Text = ((int)DBProvider.DB.ToScalerValue (
                 DBProvider.connectionString,
                 "select count(*) from Users",
                 CommandType.Text)).ToString();
@@ -42,6 +42,20 @@ namespace SS.WinForm.UI
 
             form.ShowDialog();
         }
-        #endregion 
+        #endregion
+
+        private void btnRegister_Click(object sender, EventArgs e)
+        {
+            Add add = new Add();
+
+            add.ShowDialog();
+        }
+
+        private void btnAra_Click(object sender, EventArgs e)
+        {
+            Update update = new Update();
+
+            update.ShowDialog();
+        }
     }
 }

@@ -37,6 +37,8 @@ namespace SS.WinForm.UI
             this.label2 = new System.Windows.Forms.Label();
             this.txtShowQueryCount = new System.Windows.Forms.TextBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.btnUpdate = new System.Windows.Forms.Button();
+            this.btnRegister = new System.Windows.Forms.Button();
             this.txtSumQueryCount = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.btnGetCount = new System.Windows.Forms.Button();
@@ -123,6 +125,8 @@ namespace SS.WinForm.UI
             // 
             this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel2.Controls.Add(this.btnUpdate);
+            this.panel2.Controls.Add(this.btnRegister);
             this.panel2.Controls.Add(this.txtSumQueryCount);
             this.panel2.Controls.Add(this.label3);
             this.panel2.Controls.Add(this.btnGetCount);
@@ -131,19 +135,45 @@ namespace SS.WinForm.UI
             this.panel2.Size = new System.Drawing.Size(443, 738);
             this.panel2.TabIndex = 5;
             // 
+            // btnUpdate
+            // 
+            this.btnUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnUpdate.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.btnUpdate.Location = new System.Drawing.Point(7, 168);
+            this.btnUpdate.Name = "btnUpdate";
+            this.btnUpdate.Size = new System.Drawing.Size(166, 60);
+            this.btnUpdate.TabIndex = 8;
+            this.btnUpdate.Text = "ARA";
+            this.btnUpdate.UseVisualStyleBackColor = true;
+            this.btnUpdate.Click += new System.EventHandler(this.btnAra_Click);
+            // 
+            // btnRegister
+            // 
+            this.btnRegister.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRegister.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRegister.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.btnRegister.Location = new System.Drawing.Point(7, 88);
+            this.btnRegister.Name = "btnRegister";
+            this.btnRegister.Size = new System.Drawing.Size(166, 60);
+            this.btnRegister.TabIndex = 7;
+            this.btnRegister.Text = "KAYIT OL";
+            this.btnRegister.UseVisualStyleBackColor = true;
+            this.btnRegister.Click += new System.EventHandler(this.btnRegister_Click);
+            // 
             // txtSumQueryCount
             // 
             this.txtSumQueryCount.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtSumQueryCount.Location = new System.Drawing.Point(7, 33);
+            this.txtSumQueryCount.Location = new System.Drawing.Point(183, 38);
             this.txtSumQueryCount.Name = "txtSumQueryCount";
-            this.txtSumQueryCount.Size = new System.Drawing.Size(221, 30);
+            this.txtSumQueryCount.Size = new System.Drawing.Size(249, 30);
             this.txtSumQueryCount.TabIndex = 6;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Segoe UI Semibold", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.label3.Location = new System.Drawing.Point(3, 3);
+            this.label3.Location = new System.Drawing.Point(179, 8);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(159, 23);
             this.label3.TabIndex = 5;
@@ -154,7 +184,7 @@ namespace SS.WinForm.UI
             this.btnGetCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnGetCount.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnGetCount.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.btnGetCount.Location = new System.Drawing.Point(274, 3);
+            this.btnGetCount.Location = new System.Drawing.Point(7, 8);
             this.btnGetCount.Name = "btnGetCount";
             this.btnGetCount.Size = new System.Drawing.Size(166, 60);
             this.btnGetCount.TabIndex = 1;
@@ -211,6 +241,8 @@ namespace SS.WinForm.UI
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button btnGetCount;
         private System.Windows.Forms.Button btnList;
+        private System.Windows.Forms.Button btnRegister;
+        private System.Windows.Forms.Button btnUpdate;
     }
 }
 
