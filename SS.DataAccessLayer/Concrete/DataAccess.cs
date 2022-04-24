@@ -8,49 +8,8 @@ using System.Reflection;
 
 namespace SS.DataAccessLayer.Concrete
 {
-    public class DataAccess: IDataAccess
+    public class DataAccess : IDataAccess
     {
-        public void AddSqlParameter(SqlCommand command, string name, ParameterDirection direction, SqlDbType type, object value)
-        {
-            AddSqlParameter(command, name, direction, type, value);
-        }
-        
-        public void AddSqlParameter(SqlCommand command, string name, ParameterDirection direction, SqlDbType type, object value, int size = -1)
-        {
-            command.Parameters.Add(name);
-
-            command.Parameters[name].Direction = direction;
-            command.Parameters[name].Value = value;
-            command.Parameters[name].SqlDbType = type;
-
-            if (size != -1)
-                command.Parameters[name].Size = size;
-        }
-
-        public SqlCommand CreateCommand(CommandType type, SqlConnection connection)
-        {
-            return CreateCommand(type, connection, null);
-        }
-
-        public SqlCommand CreateCommand(CommandType type, SqlConnection connection, string commandText = null)
-        {
-            try
-            {
-                SqlCommand command = new SqlCommand()
-                {
-                    CommandText = commandText,
-                    CommandType = type,
-                    Connection = connection
-                };
-
-                return command;
-            }
-            catch
-            {
-                return new SqlCommand();
-            }
-        }
-        
         public int NonQueryCommand(string connectionString, string command, CommandType type, params object[] parameters)
         {
             try
@@ -77,9 +36,37 @@ namespace SS.DataAccessLayer.Concrete
             }
         }
 
+        public int NonQueryCommand(SqlCommand command, string connectionString)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    if (connection.State == ConnectionState.Closed) connection.Open();
+
+                    command.Connection = connection;
+
+                    int affectedRow = command.ExecuteNonQuery();
+
+                    if (connection.State == ConnectionState.Open) connection.Close();
+
+                    return affectedRow;
+                }
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
         public DataTable TableFromQuery(string connectionString, string query, CommandType type, params object[] parameters)
         {
             return ToDataTable(connectionString, query, type, parameters);
+        }
+
+        public DataTable TableFromQuery(SqlCommand command, string connectionString)
+        {
+            return ToDataTable(command, connectionString);
         }
 
         public object ToScalerValue(string connectionString, string query, CommandType type, params object[] parameters)
@@ -108,6 +95,30 @@ namespace SS.DataAccessLayer.Concrete
             }
         }
 
+        public SqlCommand CreateCommand(CommandType type, SqlConnection connection)
+        {
+            return CreateCommand(type, connection, null);
+        }
+
+        public SqlCommand CreateCommand(CommandType type, SqlConnection connection, string commandText = null)
+        {
+            try
+            {
+                SqlCommand command = new SqlCommand()
+                {
+                    CommandText = commandText,
+                    CommandType = type,
+                    Connection = connection
+                };
+
+                return command;
+            }
+            catch
+            {
+                return new SqlCommand();
+            }
+        }
+
         public DataTable ToDataTable(string connectionString, string query, CommandType type, params object[] parameters)
         {
             try
@@ -129,6 +140,39 @@ namespace SS.DataAccessLayer.Concrete
 
                             return new DataTable();
                         }
+                    }
+                }
+            }
+            catch
+            {
+                return new DataTable();
+            }
+        }
+
+        public DataTable ToDataTable(SqlCommand command, string connectionString, string query = null, CommandType type = CommandType.Text)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    if(query != null)
+                        command.CommandText = query;
+
+                    if(type != CommandType.Text)
+                        command.CommandType = type;
+
+                    command.Connection = connection;    
+                    
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                    {
+                        DataTable table = new DataTable();
+
+                        adapter.Fill(table);
+
+                        if (Util.IsValidTable(table))
+                            return table;
+
+                        return new DataTable();
                     }
                 }
             }

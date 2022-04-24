@@ -44,6 +44,7 @@
     <Compile Include="Abstract\IDataAccess.cs" />
     <Compile Include="Concrete\DataAccess.cs" />
     <Compile Include="Concrete\DataConvert.cs" />
+    <Compile Include="Concrete\DBCommand.cs" />
     <Compile Include="Concrete\DBProvider.cs" />
     <Compile Include="Concrete\Util.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
