@@ -127,6 +127,14 @@ namespace SS.WinForm.UI.Forms
             }
             #endregion 
         }
+      
+        private void dataGridView1_DataSourceChanged(object sender, EventArgs e)
+        {
+            dataGridView1.Columns["USER_ID"].Visible = false;
+            dataGridView1.Columns["USER_PASSWORD"].ReadOnly = true;
+            dataGridView1.Columns["USER_REGISTER_DATE"].ReadOnly = true;
+            dataGridView1.Columns["USER_IS_ACTIVE"].ReadOnly = true;
+        }
         #endregion // EventHandlers
     }
 }
