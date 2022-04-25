@@ -13,6 +13,8 @@ namespace Entity.Validations
             RuleFor(u => u.USER_PASSWORD).Length(1, 150).WithMessage("Şifre geçersiz");
 
             RuleFor(u => u.USER_EMAIL).EmailAddress().WithMessage("Mail adresi geçersiz");
+
+            RuleFor(u => u.USER_EMAIL).MaximumLength(150).WithMessage("Mail adresi uzunluğu geçersiz");
         }
 
         public static string GetErrorMessage(Users user)
