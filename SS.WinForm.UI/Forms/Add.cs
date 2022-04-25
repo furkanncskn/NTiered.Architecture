@@ -1,5 +1,6 @@
 ﻿using Entity.Concrete;
 using Entity.Validations;
+using FluentValidation.Results;
 using SS.DataAccessLayer.Concrete;
 using System;
 using System.Data;
@@ -19,16 +20,30 @@ namespace SS.WinForm.UI.Forms
         private void btnAdd_Click(object sender, EventArgs e)
         {
             #region VALIDATION
-            usersBindingSource.EndEdit();
-
-            Users user = usersBindingSource.DataSource as Users;
-            
-            string errorMessages = UserValidator.CheckValidateUser(user);
-            
-            if(errorMessages != null)
+            Users user = new Users()
             {
-                MessageBox.Show(errorMessages);
-                return;
+                USER_NAME = txtName.Text,
+                USER_PASSWORD = txtPassword.Text,
+                USER_EMAIL = txtEmail.Text,
+            };
+
+            ValidationResult result = new UserValidator().Validate(user);
+
+            if (!result.IsValid)
+            {
+                string errorMessage = UserValidator.GetErrorMessage(result);
+
+                if (errorMessage != null)
+                {
+                    MessageBox.Show(
+                            errorMessage,
+                            "Error Message",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                        );
+
+                    return;
+                }
             }
             #endregion // VALIDATION
             

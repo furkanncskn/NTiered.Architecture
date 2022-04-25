@@ -10,6 +10,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 
 namespace SS.WinForm.UI.Forms
@@ -30,24 +31,28 @@ namespace SS.WinForm.UI.Forms
         private void btnGet_Click(object sender, EventArgs e)
         {
             #region VALIDATION
-            usersBindingSource.EndEdit();
-            
-            Users user = usersBindingSource.Current as Users;
-            
-            ValidationResult result = new UserValidator().Validate(user, ins => ins.IncludeProperties(x => x.USER_NAME));
-
-            string errorMessage = UserValidator.CheckValidateUser(result);
-
-            if (errorMessage != null)
+            Users users = new Users()
             {
-                MessageBox.Show(
-                        errorMessage,
-                        "Error Message",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error
-                    );
+                USER_NAME = txtName.Text
+            };
 
-                return;
+            ValidationResult result = new UserValidator().Validate(users, ins => ins.IncludeProperties("USER_NAME"));
+
+            if (!result.IsValid) 
+            {
+                string errorMessage = UserValidator.GetErrorMessage(result);
+
+                if (errorMessage != null)
+                {
+                    MessageBox.Show(
+                            errorMessage,
+                            "Error Message",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                        );
+
+                    return;
+                }
             }
             #endregion //VALIDATION
 
