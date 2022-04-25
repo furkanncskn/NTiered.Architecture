@@ -17,14 +17,19 @@ namespace SS.DataAccessLayer.Abstract
         DataTable TableFromQuery(SqlCommand command, string connectionString);
 
         object ToScalerValue(string connectionString, string query, CommandType type, params object[] parameters);
-       
+
+        SqlCommand CreateCommand(CommandType type, string commandText);
+
         SqlCommand CreateCommand(CommandType type, SqlConnection connection);
        
         SqlCommand CreateCommand(CommandType type, SqlConnection connection, string commandText);
-          
+
+        DataTable ToDataTable(SqlCommand command, string connectionString);
+
+        DataTable ToDataTable(SqlCommand command, string connectionString, string query);
+
+        DataTable ToDataTable(SqlCommand command, string connectionString, string query, CommandType type);
+
         DataTable ToDataTable(string connectionString, string query, CommandType type, params object[] parameters);
-
-        DataTable ToDataTable(SqlCommand command, string connectionString = null, string query = null, CommandType type = CommandType.Text);
-
     }
 }

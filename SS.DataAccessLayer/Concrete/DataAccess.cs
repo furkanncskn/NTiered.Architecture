@@ -95,12 +95,17 @@ namespace SS.DataAccessLayer.Concrete
             }
         }
 
+        public SqlCommand CreateCommand(CommandType type, string commandText)
+        {
+            return CreateCommand(type, null, commandText);
+        }
+
         public SqlCommand CreateCommand(CommandType type, SqlConnection connection)
         {
             return CreateCommand(type, connection, null);
         }
 
-        public SqlCommand CreateCommand(CommandType type, SqlConnection connection, string commandText = null)
+        public SqlCommand CreateCommand(CommandType type, SqlConnection connection, string commandText)
         {
             try
             {
@@ -119,37 +124,17 @@ namespace SS.DataAccessLayer.Concrete
             }
         }
 
-        public DataTable ToDataTable(string connectionString, string query, CommandType type, params object[] parameters)
+        public DataTable ToDataTable(SqlCommand command, string connectionString)
         {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    using (SqlCommand command = CreateCommand(type, connection))
-                    {
-                        command.CommandText = string.Format(query, parameters);
-
-                        using (SqlDataAdapter adapter = new SqlDataAdapter(command))
-                        {
-                            DataTable table = new DataTable();
-
-                            adapter.Fill(table);
-
-                            if(Util.IsValidTable(table))
-                                return table;
-
-                            return new DataTable();
-                        }
-                    }
-                }
-            }
-            catch
-            {
-                return new DataTable();
-            }
+            return ToDataTable(command, connectionString, null);
         }
-
-        public DataTable ToDataTable(SqlCommand command, string connectionString, string query = null, CommandType type = CommandType.Text)
+        
+        public DataTable ToDataTable(SqlCommand command, string connectionString, string query)
+        {
+            return ToDataTable(command, connectionString, query, CommandType.Text);
+        }
+        
+        public DataTable ToDataTable(SqlCommand command, string connectionString, string query, CommandType type)
         {
             try
             {
@@ -173,6 +158,36 @@ namespace SS.DataAccessLayer.Concrete
                             return table;
 
                         return new DataTable();
+                    }
+                }
+            }
+            catch
+            {
+                return new DataTable();
+            }
+        }
+
+        public DataTable ToDataTable(string connectionString, string query, CommandType type, params object[] parameters)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand command = CreateCommand(type, connection))
+                    {
+                        command.CommandText = string.Format(query, parameters);
+                        
+                        using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                        {
+                            DataTable table = new DataTable();
+
+                            adapter.Fill(table);
+
+                            if(Util.IsValidTable(table))
+                                return table;
+
+                            return new DataTable();
+                        }
                     }
                 }
             }
