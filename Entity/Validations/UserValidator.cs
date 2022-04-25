@@ -19,31 +19,31 @@ namespace Entity.Validations
             RuleFor(u => u.USER_EMAIL).EmailAddress().WithMessage("Geçersiz mail adresi");
         }
 
-        public static string CheckValidateUser(Users user)
+        public static string GetErrorMessage(Users user)
         {
             if (user != null)
             {
-                return Util.GetHasError(new UserValidator().Validate(user));
+                return Util.HasError(new UserValidator().Validate(user));
             }
             
             return null;
         }
 
-        public static string CheckValidateUser(ValidationContext<Users> context)
+        public static string GetErrorMessage(ValidationContext<Users> context)
         {
             if (context != null)
             {
-                return Util.GetHasError(new UserValidator().Validate(context));
+                return Util.HasError(new UserValidator().Validate(context));
             }
 
             return null;
         }
 
-        public static string CheckValidateUser(ValidationResult result)
+        public static string GetErrorMessage(ValidationResult result)
         {
             if (result != null)
             {
-                return Util.GetHasError(result);
+                return Util.HasError(result);
             }
 
             return null;

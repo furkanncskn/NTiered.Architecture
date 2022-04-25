@@ -7,18 +7,13 @@ namespace Entity
 {
     public static class Util
     {
-        public static string GetHasError(ValidationResult result)
+        public static string HasError(ValidationResult result)
         {
             StringBuilder builder = new StringBuilder();
 
-            if (!result.IsValid)
-            {
-                result.Errors.ForEach(error => builder.AppendLine(error.ErrorMessage));
+            result.Errors.ForEach(error => builder.AppendLine(error.ErrorMessage));
 
-                return builder.ToString();
-            }
-
-            return null;
+            return builder.ToString();
         }
     }
 }
