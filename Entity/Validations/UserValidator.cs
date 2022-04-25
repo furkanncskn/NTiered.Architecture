@@ -8,13 +8,11 @@ namespace Entity.Validations
     {
         public UserValidator()
         {
-            //RuleFor(u => u.USER_NAME).Length(1, 150).WithMessage("Kullanıcı adı geçersiz");
+            RuleFor(u => u.USER_NAME).Length(1, 150).WithMessage("Kullanıcı adı geçersiz");
+            
+            RuleFor(u => u.USER_PASSWORD).Length(1, 150).WithMessage("Şifre geçersiz");
 
-            //RuleFor(u => u.USER_PASSWORD).Length(1, 150).WithMessage("Şifre geçersiz");
-
-            //RuleFor(u => u.USER_EMAIL).EmailAddress().WithMessage("Mail adresi geçersiz");
-
-            //RuleFor(u => u.USER_EMAIL).MaximumLength(150).WithMessage("Mail adresi uzunluğu geçersiz");
+            RuleFor(u => u.USER_EMAIL).EmailAddress().WithMessage("Mail adresi geçersiz");
         }
 
         public static string GetErrorMessage(Users user)
