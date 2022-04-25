@@ -34,7 +34,7 @@ namespace SS.WinForm.UI.Forms
                 listBox1.Items.Add("******************************************************");
                 listBox1.Items.Add("KULLANICI ADI: " + item.USER_NAME);
                 listBox1.Items.Add("E-POSTA: " + item.USER_EMAIL);
-                listBox1.Items.Add("KAYIT TARİHİ:" + item.USER_REGISTER_DATE);
+                listBox1.Items.Add("KAYIT TARİHİ: " + item.USER_REGISTER_DATE);
                 listBox1.Items.Add("******************************************************");
                 count++;
             }
