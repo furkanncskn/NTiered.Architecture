@@ -1,9 +1,11 @@
 ﻿using Entity.Concrete;
+using Entity.Validations;
+using FluentValidation;
+using FluentValidation.Results;
+using FluentValidation.Validators;
 using SS.DataAccessLayer.Concrete;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -32,35 +34,25 @@ namespace SS.WinForm.UI.Forms
             
             Users user = usersBindingSource.Current as Users;
             
-            PropertyInfo property = typeof(Users).GetProperties().Where(p => p.Name == "USER_NAME").First();
+            ValidationResult result = new UserValidator().Validate(user, ins => ins.IncludeProperties(x => x.USER_NAME));
 
-            ValidationContext context = new ValidationContext(user)
-            {
-                MemberName = property.Name,
-            };
+            string errorMessage = UserValidator.CheckValidateUser(result);
 
-            ICollection<ValidationResult> results = new List<ValidationResult>();
-            
-            if(!Validator.TryValidateProperty(user.USER_NAME, context, results))
+            if (errorMessage != null)
             {
-                foreach (var item in results)
-                {
-                    MessageBox.Show(
-                        "Hata Mesajı: " + item.ErrorMessage,
-                        "Message",
+                MessageBox.Show(
+                        errorMessage,
+                        "Error Message",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error
-                        );
-                }
+                    );
+
+                return;
             }
             #endregion //VALIDATION
 
             #region GET
-            SqlCommand command = new SqlCommand()
-            {
-                CommandText = "sp_get_user_by_name",
-                CommandType = CommandType.StoredProcedure,
-            };
+            SqlCommand command = DBProvider.DB.CreateCommand(CommandType.StoredProcedure, "sp_get_user_by_name");
 
             command.AddSqlParameter("USER_NAME", ParameterDirection.Input, SqlDbType.Text, txtName.Text);
 
@@ -76,11 +68,11 @@ namespace SS.WinForm.UI.Forms
 
             #region ERR_MSG
             MessageBox.Show(
-                    "Kullanıcı Bulunamadı",
-                    "Information",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information
-                    );
+                "Kullanıcı Bulunamadı",
+                "Information",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information
+            );
             #endregion // ERR_MSG
         }
 
@@ -97,14 +89,10 @@ namespace SS.WinForm.UI.Forms
             #endregion // GET_PARAMS
 
             #region UPDATE
-            SqlCommand command = new SqlCommand()
-            {
-                CommandText = "sp_update_User",
-                CommandType = CommandType.StoredProcedure
-            };
+            SqlCommand command = DBProvider.DB.CreateCommand(CommandType.StoredProcedure, "sp_update_User");
 
             int result = 0;
-
+            
             command.AddSqlParameter("USER_ID", ParameterDirection.Input, SqlDbType.Int, user.USER_ID);
             command.AddSqlParameter("USER_NAME", ParameterDirection.Input, SqlDbType.VarChar, user.USER_NAME);
             command.AddSqlParameter("USER_PASSWORD", ParameterDirection.Input, SqlDbType.VarChar, user.USER_PASSWORD);
@@ -130,10 +118,16 @@ namespace SS.WinForm.UI.Forms
       
         private void dataGridView1_DataSourceChanged(object sender, EventArgs e)
         {
-            dataGridView1.Columns["USER_ID"].Visible = false;
-            dataGridView1.Columns["USER_PASSWORD"].ReadOnly = true;
-            dataGridView1.Columns["USER_REGISTER_DATE"].ReadOnly = true;
-            dataGridView1.Columns["USER_IS_ACTIVE"].ReadOnly = true;
+            if (dataGridView1.Columns.Count > 0)
+            {
+                if (dataGridView1.Columns.Contains("USER_ID") == true) { dataGridView1.Columns["USER_ID"].Visible = false; }
+
+                if (dataGridView1.Columns.Contains("USER_PASSWORD") == true) { dataGridView1.Columns["USER_PASSWORD"].ReadOnly = true; }
+
+                if (dataGridView1.Columns.Contains("USER_REGISTER_DATE") == true) { dataGridView1.Columns["USER_REGISTER_DATE"].ReadOnly = true; }
+
+                if (dataGridView1.Columns.Contains("USER_IS_ACTIVE") == true) { dataGridView1.Columns["USER_IS_ACTIVE"].ReadOnly = true; }
+            }
         }
         #endregion // EventHandlers
     }

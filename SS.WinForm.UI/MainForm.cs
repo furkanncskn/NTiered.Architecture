@@ -19,48 +19,54 @@ namespace SS.WinForm.UI
         #region EventHandler
         private void btnGetAll_Click(object sender, EventArgs e)
         {
-            dataGridView1.DataSource = null;
             dataGridView1.DataSource = DBProvider.DB.TableFromQuery(
-                DBProvider.connectionString,
-                "select * from Users",
-                CommandType.Text);
-
-            dataGridView1.Columns["USER_ID"].Visible = false;
+                                            DBProvider.connectionString,
+                                                "select * from Users",
+                                                    CommandType.Text
+                                        );
         }
 
         private void btnGetCount_Click(object sender, EventArgs e)
         {
             txtSumQueryCount.Text = ((int)DBProvider.DB.ToScalerValue (
-                DBProvider.connectionString,
-                "select count(*) from Users",
-                CommandType.Text)).ToString();
+                                        DBProvider.connectionString,
+                                            "select count(*) from Users",
+                                                CommandType.Text
+                                        )
+                                    ).ToString();
         }
 
         private void btnList_Click(object sender, EventArgs e)
         {
             ListForm form = new ListForm();
 
-            form.ShowDialog();
+            if (form != null) { form.ShowDialog(); }
         }
-        #endregion
-
+        
         private void btnRegister_Click(object sender, EventArgs e)
         {
-            Add add = new Add();
+            Add form = new Add();
 
-            add.ShowDialog();
+            if (form != null) { form.ShowDialog(); }
         }
 
         private void btnAra_Click(object sender, EventArgs e)
         {
-            Update update = new Update();
+            Update form = new Update();
 
-            update.ShowDialog();
+            if (form != null) { form.ShowDialog(); }
         }
 
         private void dataGridView1_DataSourceChanged(object sender, EventArgs e)
         {
-            dataGridView1.Columns["USER_ID"].Visible = false;
+            if (dataGridView1.Columns.Count > 0)
+            {
+                if (dataGridView1.Columns.Contains("USER_ID") == true)
+                {
+                    dataGridView1.Columns["USER_ID"].Visible = false;
+                }
+            }
         }
+        #endregion
     }
 }

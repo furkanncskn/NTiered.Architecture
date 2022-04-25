@@ -19,13 +19,11 @@ namespace SS.WinForm.UI.Forms
         {
             List<Users> list = DataConvert<Users>.ToListFromDataTable(
                                                 DBProvider.DB.TableFromQuery(
-                                                DBProvider.connectionString,
-                                                "select * from Users",
-                                                CommandType.Text
-                                            )
-                                        );
-
-            Users user = new Users();
+                                                    DBProvider.connectionString,
+                                                        "select * from Users",
+                                                            CommandType.Text
+                                                )
+                                            );
 
             listBox1.Items.Add("KAYITLAR");
             int count = 1;
