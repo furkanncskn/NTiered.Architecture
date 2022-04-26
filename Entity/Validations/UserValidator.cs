@@ -44,7 +44,7 @@ namespace Entity.Validations
                 return Util.HasError(result);
             }
 
-            return null;
+            return "";
         }
     }
 }
