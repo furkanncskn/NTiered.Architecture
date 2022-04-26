@@ -13,54 +13,69 @@ namespace SS.BusinessLogicLayer.Commen
     {
         public List<T> SelectAll()
         {
-            Type type = typeof(T);
+            try
+            {
+                Type type = typeof(T);
 
-            string name = typeof(T).GetAttributeValue((TableAttribute info) => info.Name);
+                string name = typeof(T).GetAttributeValue((TableAttribute info) => info.Name);
 
-            SqlCommand command = DBProvider.DB.CreateCommand(
-                    CommandType.Text,
-                    String.Format("select * from v_get_all_{0}", type.Name));
+                SqlCommand command = DBProvider.DB.CreateCommand(
+                        CommandType.Text,
+                        String.Format("select * from v_get_all_{0}", type.Name));
 
-            DataTable table = DBProvider.DB.TableFromQuery(command, DBProvider.connectionString);
-                
-            return DataConvert<T>.ToListFromDataTable(table);
+                DataTable table = DBProvider.DB.TableFromQuery(command, DBProvider.connectionString);
+
+                return DataConvert<T>.ToListFromDataTable(table);
+            }
+            catch 
+            {
+
+                return new List<T>();
+            }
         }
         
         public DataTable SelectByIdToTable(int id)
         {
-            Type type = typeof(T);
-
-            string name = typeof(T).GetAttributeValue((TableAttribute info) => info.Name);
-
-            SqlCommand command = DBProvider.DB.CreateCommand(
-                    CommandType.StoredProcedure,
-                    String.Format("sp_get_{0}_by_id", name));
-
-            string propName = null;
-
-            PropertyInfo[] properties = type.GetProperties();
-
-            foreach (PropertyInfo property in properties)
+            try
             {
-                if (property.IsThereAnAttribute(typeof(KeyAttribute)))
-                {
-                    propName = property.Name;
-                }
-            }
+                Type type = typeof(T);
 
-            if (propName == null)
+                string name = typeof(T).GetAttributeValue((TableAttribute info) => info.Name);
+
+                SqlCommand command = DBProvider.DB.CreateCommand(
+                        CommandType.StoredProcedure,
+                        String.Format("sp_get_{0}_by_id", name));
+
+                string propName = null;
+
+                PropertyInfo[] properties = type.GetProperties();
+
+                foreach (PropertyInfo property in properties)
+                {
+                    if (property.IsThereAnAttribute(typeof(KeyAttribute)))
+                    {
+                        propName = property.Name;
+                    }
+                }
+
+                if (propName == null)
+                {
+                    return new DataTable();
+                }
+
+                command.AddSqlParameter(
+                        propName,
+                        ParameterDirection.Input,
+                        SqlDbType.Int,
+                        id
+                    );
+
+                return DBProvider.DB.TableFromQuery(command, DBProvider.connectionString);
+            }
+            catch
             {
                 return new DataTable();
             }
-
-            command.AddSqlParameter(
-                    propName,
-                    ParameterDirection.Input,
-                    SqlDbType.Int,
-                    id
-                );
-
-            return DBProvider.DB.TableFromQuery(command, DBProvider.connectionString);
         }
 
         public T SelectById(int id)
@@ -72,40 +87,50 @@ namespace SS.BusinessLogicLayer.Commen
 
         public bool Insert(T entity)
         {
-            Type type = typeof(T);
-
-            string name = type.GetAttributeValue((TableAttribute info) => info.Name);
-
-            SqlCommand command = DBProvider.DB.CreateCommand(
-                    CommandType.StoredProcedure,
-                    String.Format("sp_insert_{0}", name)
-               );
-
-            PropertyInfo[] properties = type.GetProperties();
-            foreach (PropertyInfo property in properties)
+            try
             {
-                Type proType = property.GetType();
+                Type type = typeof(T);
 
-                if (Nullable.GetUnderlyingType(property.PropertyType) != null) // nullable check
-                { 
-                    continue;
-                }
+                string name = type.GetAttributeValue((TableAttribute info) => info.Name);
 
-                object value = property.GetValue(entity);
-                if (value == null)
+                SqlCommand command = DBProvider.DB.CreateCommand(
+                        CommandType.StoredProcedure,
+                        String.Format("sp_insert_{0}", name)
+                   );
+
+                PropertyInfo[] properties = type.GetProperties();
+                foreach (PropertyInfo property in properties)
                 {
-                    continue;
+                    Type proType = property.GetType();
+
+                    if (Nullable.GetUnderlyingType(property.PropertyType) != null) // nullable check
+                    {
+                        if (property.GetValue(entity) == null)
+                        {
+                            continue;
+                        }
+                    }
+
+                    object value = property.GetValue(entity);
+                    if (value == null)
+                    {
+                        continue;
+                    }
+
+                    if (property.IsThereAnAttribute(typeof(KeyAttribute)) == true) // key check
+                    {
+                        continue;
+                    }
+
+                    command.AddSqlParameter(property.Name, ParameterDirection.Input, value);
                 }
 
-                if (property.IsThereAnAttribute(typeof(KeyAttribute)) == true) // key check
-                {
-                    continue;
-                }
-
-                command.AddSqlParameter(property.Name, ParameterDirection.Input, value);
+                return DBProvider.DB.NonQueryCommand(command, DBProvider.connectionString) > 0;
             }
-
-            return DBProvider.DB.NonQueryCommand(command, DBProvider.connectionString) > 0;
+            catch
+            {
+                return false;
+            }
         }
         
         public bool Update(T entity)

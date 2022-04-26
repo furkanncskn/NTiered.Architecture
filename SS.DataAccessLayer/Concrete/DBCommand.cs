@@ -10,12 +10,24 @@ namespace SS.DataAccessLayer.Concrete
 {
     public static class DBCommand
     {
-        public static void AddSqlParameter(this SqlCommand command, string name, ParameterDirection direction, SqlDbType type, object value)
+        public static void AddSqlParameter(
+            this SqlCommand command, 
+            string name, 
+            ParameterDirection direction, 
+            SqlDbType type, 
+            object value)
         {
             AddSqlParameter(command, name, direction, type, value, -1);
         }
 
-        public static void AddSqlParameter(this SqlCommand command, string name, ParameterDirection direction, SqlDbType type, object value, int size)
+        public static void AddSqlParameter(
+            this SqlCommand command, 
+            string name, 
+            ParameterDirection direction, 
+            SqlDbType type, 
+            object value, 
+            int size
+            )
         {
             SqlParameter parameter = new SqlParameter()
             {
@@ -31,7 +43,12 @@ namespace SS.DataAccessLayer.Concrete
             command.Parameters.Add(parameter);
         }
 
-        public static void AddSqlParameter(this SqlCommand command, string name, ParameterDirection direction, object value)
+        public static void AddSqlParameter(
+            this SqlCommand command, 
+            string name, 
+            ParameterDirection direction, 
+            object value
+            )
         {
             SqlParameter parameter = new SqlParameter()
             {

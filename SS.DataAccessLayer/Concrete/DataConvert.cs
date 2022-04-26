@@ -12,23 +12,30 @@ namespace SS.DataAccessLayer.Concrete
     {
         public static T TableSelectedIndexToClass(DataTable table, int idx)
         {
-            Type type = typeof(T);
-
-            T instance = new T();
-
-            PropertyInfo[] properties = type.GetProperties();
-
-            foreach (PropertyInfo property in properties)
+            try
             {
-                object value = table.Rows[idx][property.Name];
+                Type type = typeof(T);
 
-                if(value == DBNull.Value)
-                    continue;
+                T instance = new T();
 
-                property.SetValue(instance, value);
+                PropertyInfo[] properties = type.GetProperties();
+
+                foreach (PropertyInfo property in properties)
+                {
+                    object value = table.Rows[idx][property.Name];
+
+                    if (value == DBNull.Value)
+                        continue;
+
+                    property.SetValue(instance, value);
+                }
+
+                return instance;
             }
-
-            return instance;
+            catch 
+            {
+                return new T();
+            }
         }
 
         public static T TableFirstRowToClass(DataTable table)
@@ -42,7 +49,7 @@ namespace SS.DataAccessLayer.Concrete
             {
                 return new List<T>();
             }
-            string asda = "";
+
             try
             {
                 List<T> list = new List<T>();
@@ -59,29 +66,10 @@ namespace SS.DataAccessLayer.Concrete
 
                 return list;
             }
-            catch(Exception ex)
+            catch
             {
-                asda = ex.Message;
-
                 return new List<T>();
             }
-        }
-
-        public static T ChangeType(object value)
-        {
-            var t = typeof(T);
-
-            if (t.IsGenericType && t.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
-            {
-                if (value == null)
-                {
-                    return default(T);
-                }
-
-                t = Nullable.GetUnderlyingType(t);
-            }
-
-            return (T)Convert.ChangeType(value, t);
         }
     }
 }
