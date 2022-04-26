@@ -17,11 +17,5 @@ namespace Entity.Attribute
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     public sealed class KeyAttribute : System.Attribute
     {
-        private string _key;
-
-        public string Key
-        {
-            get { return _key; }
-        }
     }
 }
