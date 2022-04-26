@@ -56,11 +56,6 @@ namespace SS.DataAccessLayer.Concrete
 
                 for(int i = 0; i < table.Rows.Count; i++)
                 {
-                    if (i == 2150)
-                    {
-                        int y = 10;
-                    }
-
                     list.Add(TableSelectedIndexToClass(table, i));
                 }
 
