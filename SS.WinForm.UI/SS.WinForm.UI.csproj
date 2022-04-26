@@ -98,6 +98,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="Diagram.UI.cd" />
     <None Include="packages.config" />
     <None Include="Properties\DataSources\Entity.Concrete.Users.datasource" />
     <None Include="Properties\Settings.settings">
@@ -117,6 +118,10 @@
     <ProjectReference Include="..\Entity\SS.Entity.csproj">
       <Project>{211dbf17-322b-4bb6-a3ec-5bc3366e95e6}</Project>
       <Name>SS.Entity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SS.BusinessLogicLayer\SS.BusinessLogicLayer.csproj">
+      <Project>{e9487002-6706-4f3c-9671-c76c392da1e7}</Project>
+      <Name>SS.BusinessLogicLayer</Name>
     </ProjectReference>
     <ProjectReference Include="..\SS.DataAccessLayer\SS.DataAccessLayer.csproj">
       <Project>{525242d7-35f1-4470-b1e0-ef92b09696b9}</Project>
