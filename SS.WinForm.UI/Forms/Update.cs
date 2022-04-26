@@ -1,39 +1,15 @@
 ﻿using Entity.Concrete;
-using Entity.Validations;
-using FluentValidation;
-using FluentValidation.Results;
-using FluentValidation.Validators;
-using SS.BusinessLogicLayer.BBL;
-using SS.BusinessLogicLayer.Commen;
 using SS.DataAccessLayer.Concrete;
+using SS.WinForm.UI.Commen;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
 
 namespace SS.WinForm.UI.Forms
 {
     public partial class Update : Form
     {
-        private static IBBL<Users> _UserBBL;
-
-        public static IBBL<Users> UserBBL
-        {
-            get
-            {
-                if (_UserBBL == null)
-                {
-                    _UserBBL = new UsersBBL();
-                }
-
-                return _UserBBL;
-            }
-        }
-
         public Update()
         {
             InitializeComponent();
@@ -47,7 +23,7 @@ namespace SS.WinForm.UI.Forms
 
         private void btnGet_Click(object sender, EventArgs e)
         {
-            DataTable table = UserBBL.SelectByIdToTable(Convert.ToInt32(txtId.Text));
+            DataTable table = Connection.UserBBL.SelectByIdToTable(Convert.ToInt32(txtId.Text));
 
             if (!(table.Rows.Count > 0))
             {

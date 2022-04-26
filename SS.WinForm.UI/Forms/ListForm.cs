@@ -1,31 +1,13 @@
 ﻿using Entity.Concrete;
-using SS.BusinessLogicLayer.BBL;
-using SS.BusinessLogicLayer.Commen;
-using SS.DataAccessLayer.Concrete;
+using SS.WinForm.UI.Commen;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Windows.Forms;
 
 namespace SS.WinForm.UI.Forms
 {
     public partial class ListForm : Form
     {
-        private static IBBL<Users> _UserBBL;
-
-        public static IBBL<Users> UserBBL
-        {
-            get
-            {
-                if (_UserBBL == null)
-                {
-                    _UserBBL = new UsersBBL();
-                }
-
-                return _UserBBL;
-            }
-        }
-
         public ListForm()
         {
             InitializeComponent();
@@ -51,7 +33,7 @@ namespace SS.WinForm.UI.Forms
         #region EventHandler
         private void ListForm_Load(object sender, EventArgs e)
         {
-            List<Users> users = UserBBL.SelectAll();
+            List<Users> users = Connection.UserBBL.SelectAll();
 
             AddListToListBox(users);
         }
