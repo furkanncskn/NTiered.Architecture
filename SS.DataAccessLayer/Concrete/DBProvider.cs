@@ -10,12 +10,37 @@ namespace SS.DataAccessLayer.Concrete
 {
     public static class DBProvider
     {
-        private static string _connectionString;
+        private static string _connectionString = "";
 
-        private static IDataAccess _dataAccess = new DataAccess();
+        private static IDataAccess _dataAccess = null;
 
-        public static string connectionString { get {return _connectionString; } set { _connectionString = value; } }
+        public static string connectionString 
+        { 
+            get 
+            {
+                return _connectionString; 
+            } 
+            set 
+            { 
+                _connectionString = value; 
+            } 
+        }
 
-        public static IDataAccess DB { get { return _dataAccess; } set { _dataAccess = value; } }
+        public static IDataAccess DB 
+        { 
+            get 
+            { 
+                if (_dataAccess == null) 
+                { 
+                    _dataAccess = new DataAccess(); 
+                } 
+                
+                return _dataAccess; 
+            } 
+            set 
+            { 
+                _dataAccess = value; 
+            } 
+        }
     }
 }
