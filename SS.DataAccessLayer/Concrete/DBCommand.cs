@@ -31,5 +31,16 @@ namespace SS.DataAccessLayer.Concrete
             command.Parameters.Add(parameter);
         }
 
+        public static void AddSqlParameter(this SqlCommand command, string name, ParameterDirection direction, object value)
+        {
+            SqlParameter parameter = new SqlParameter()
+            {
+                Direction = direction,
+                ParameterName = name,
+                Value = value
+            };
+
+            command.Parameters.Add(parameter);
+        }
     }
 }

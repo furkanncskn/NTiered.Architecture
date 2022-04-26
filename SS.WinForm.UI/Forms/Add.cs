@@ -1,6 +1,8 @@
 ﻿using Entity.Concrete;
 using Entity.Validations;
 using FluentValidation.Results;
+using SS.BusinessLogicLayer.BBL;
+using SS.BusinessLogicLayer.Commen;
 using SS.DataAccessLayer.Concrete;
 using System;
 using System.Data;
@@ -11,6 +13,21 @@ namespace SS.WinForm.UI.Forms
 {
     public partial class Add : Form
     {
+        private static IBBL<Users> _UserBBL;
+
+        public static IBBL<Users> UserBBL
+        {
+            get
+            {
+                if (_UserBBL == null)
+                {
+                    _UserBBL = new UsersBBL();
+                }
+
+                return _UserBBL;
+            }
+        }
+
         public Add()
         {
             InitializeComponent();
@@ -33,32 +50,23 @@ namespace SS.WinForm.UI.Forms
             {
                 string errorMessage = UserValidator.GetErrorMessage(result);
 
-                if (errorMessage != null)
-                {
-                    MessageBox.Show(
-                            errorMessage,
-                            "Error Message",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Error
-                        );
+                MessageBox.Show(
+                        errorMessage,
+                        "Error Message",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
 
-                    return;
-                }
+                return;
             }
             #endregion // VALIDATION
-            
+
             #region ADD
-            SqlCommand command = DBProvider.DB.CreateCommand(CommandType.StoredProcedure, "sp_insert_Users");
-
-            command.AddSqlParameter("USER_NAME", ParameterDirection.Input, SqlDbType.VarChar, txtName.Text ,150);
-            command.AddSqlParameter("USER_PASSWORD", ParameterDirection.Input, SqlDbType.VarChar, txtPassword.Text, 150);
-            command.AddSqlParameter("USER_EMAIL", ParameterDirection.Input, SqlDbType.VarChar, txtEmail.Text, 150);
-
-            int affectedRow = DBProvider.DB.NonQueryCommand(command, DBProvider.connectionString);
+            bool success = UserBBL.Insert(user);
             #endregion // ADD
 
             #region ERR_MSG
-            if (!(affectedRow > 0))
+            if (success == false)
             {
                 MessageBox.Show(
                     "Kayıt işlemi başarısız oldu",

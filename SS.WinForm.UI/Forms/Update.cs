@@ -3,6 +3,8 @@ using Entity.Validations;
 using FluentValidation;
 using FluentValidation.Results;
 using FluentValidation.Validators;
+using SS.BusinessLogicLayer.BBL;
+using SS.BusinessLogicLayer.Commen;
 using SS.DataAccessLayer.Concrete;
 using System;
 using System.Collections.Generic;
@@ -17,6 +19,21 @@ namespace SS.WinForm.UI.Forms
 {
     public partial class Update : Form
     {
+        private static IBBL<Users> _UserBBL;
+
+        public static IBBL<Users> UserBBL
+        {
+            get
+            {
+                if (_UserBBL == null)
+                {
+                    _UserBBL = new UsersBBL();
+                }
+
+                return _UserBBL;
+            }
+        }
+
         public Update()
         {
             InitializeComponent();
@@ -30,55 +47,21 @@ namespace SS.WinForm.UI.Forms
 
         private void btnGet_Click(object sender, EventArgs e)
         {
-            #region VALIDATION
-            Users users = new Users()
+            DataTable table = UserBBL.SelectByIdToTable(Convert.ToInt32(txtId.Text));
+
+            if (!(table.Rows.Count > 0))
             {
-                USER_NAME = txtName.Text
-            };
+                MessageBox.Show(
+                    "Kullanıcı Bulunamadı",
+                    "Information",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
 
-            ValidationResult result = new UserValidator().Validate(users, ins => ins.IncludeProperties("USER_NAME"));
-
-            if (!result.IsValid) 
-            {
-                string errorMessage = UserValidator.GetErrorMessage(result);
-
-                if (errorMessage != null)
-                {
-                    MessageBox.Show(
-                            errorMessage,
-                            "Error Message",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Error
-                        );
-
-                    return;
-                }
-            }
-            #endregion //VALIDATION
-
-            #region GET
-            SqlCommand command = DBProvider.DB.CreateCommand(CommandType.StoredProcedure, "sp_get_user_by_name");
-
-            command.AddSqlParameter("USER_NAME", ParameterDirection.Input, SqlDbType.Text, txtName.Text);
-
-            DataTable table = DBProvider.DB.TableFromQuery (command, DBProvider.connectionString);
-
-            if (table.Rows.Count > 0)
-            {
-                dataGridView1.DataSource = table;
-                
                 return;
             }
-            #endregion // GET
 
-            #region ERR_MSG
-            MessageBox.Show(
-                "Kullanıcı Bulunamadı",
-                "Information",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information
-            );
-            #endregion // ERR_MSG
+            dataGridView1.DataSource = table;
         }
 
         private void btnUpdate_Click(object sender, EventArgs e)

@@ -1,4 +1,6 @@
 ﻿using Entity.Concrete;
+using SS.BusinessLogicLayer.BBL;
+using SS.BusinessLogicLayer.Commen;
 using SS.DataAccessLayer.Concrete;
 using System;
 using System.Collections.Generic;
@@ -9,22 +11,28 @@ namespace SS.WinForm.UI.Forms
 {
     public partial class ListForm : Form
     {
+        private static IBBL<Users> _UserBBL;
+
+        public static IBBL<Users> UserBBL
+        {
+            get
+            {
+                if (_UserBBL == null)
+                {
+                    _UserBBL = new UsersBBL();
+                }
+
+                return _UserBBL;
+            }
+        }
+
         public ListForm()
         {
             InitializeComponent();
         }
 
-        #region EventHandler
-        private void ListForm_Load(object sender, EventArgs e)
+        private void AddListToListBox(List<Users> list)
         {
-            List<Users> list = DataConvert<Users>.ToListFromDataTable(
-                                                DBProvider.DB.TableFromQuery(
-                                                    DBProvider.connectionString,
-                                                        "select * from Users",
-                                                            CommandType.Text
-                                                )
-                                            );
-
             listBox1.Items.Add("KAYITLAR");
             int count = 1;
             foreach (Users item in list)
@@ -38,6 +46,14 @@ namespace SS.WinForm.UI.Forms
                 listBox1.Items.Add("******************************************************");
                 count++;
             }
+        }
+
+        #region EventHandler
+        private void ListForm_Load(object sender, EventArgs e)
+        {
+            List<Users> users = UserBBL.SelectAll();
+
+            AddListToListBox(users);
         }
         #endregion
     }

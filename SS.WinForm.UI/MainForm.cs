@@ -1,4 +1,7 @@
-﻿using SS.DataAccessLayer.Concrete;
+﻿using Entity.Concrete;
+using SS.BusinessLogicLayer.BBL;
+using SS.BusinessLogicLayer.Commen;
+using SS.DataAccessLayer.Concrete;
 using SS.WinForm.UI.Forms;
 using System;
 using System.Configuration;
@@ -9,6 +12,21 @@ namespace SS.WinForm.UI
 {
     public partial class MainForm : Form
     {
+        private static IBBL<Users> _UserBBL;
+
+        public static IBBL<Users> UserBBL
+        {
+            get
+            {
+                if (_UserBBL == null)
+                {
+                    _UserBBL = new UsersBBL();
+                }
+
+                return _UserBBL;
+            }
+        }
+
         public MainForm()
         {
             DBProvider.connectionString = ConfigurationManager.ConnectionStrings["SpaceSurgeon"].ToString();
@@ -19,11 +37,7 @@ namespace SS.WinForm.UI
         #region EventHandler
         private void btnGetAll_Click(object sender, EventArgs e)
         {
-            dataGridView1.DataSource = DBProvider.DB.TableFromQuery(
-                                            DBProvider.connectionString,
-                                                "select * from Users",
-                                                    CommandType.Text
-                                        );
+            dataGridView1.DataSource = UserBBL.SelectAll();
         }
 
         private void btnGetCount_Click(object sender, EventArgs e)
