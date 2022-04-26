@@ -3,7 +3,7 @@
 namespace Entity.Attribute
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public sealed class ClassAttribute : System.Attribute
+    public sealed class TableAttribute : System.Attribute
     {
         private string _name;
 
@@ -17,12 +17,11 @@ namespace Entity.Attribute
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     public sealed class KeyAttribute : System.Attribute
     {
-        private int _key;
+        private string _key;
 
-        public int Key
+        public string Key
         {
             get { return _key; }
-            set { _key = value; }
         }
     }
 }
