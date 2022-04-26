@@ -1,33 +1,14 @@
 ﻿using Entity.Concrete;
 using Entity.Validations;
 using FluentValidation.Results;
-using SS.BusinessLogicLayer.BBL;
-using SS.BusinessLogicLayer.Commen;
-using SS.DataAccessLayer.Concrete;
+using SS.WinForm.UI.Commen;
 using System;
-using System.Data;
-using System.Data.SqlClient;
 using System.Windows.Forms;
 
 namespace SS.WinForm.UI.Forms
 {
     public partial class Add : Form
     {
-        private static IBBL<Users> _UserBBL;
-
-        public static IBBL<Users> UserBBL
-        {
-            get
-            {
-                if (_UserBBL == null)
-                {
-                    _UserBBL = new UsersBBL();
-                }
-
-                return _UserBBL;
-            }
-        }
-
         public Add()
         {
             InitializeComponent();
@@ -62,7 +43,7 @@ namespace SS.WinForm.UI.Forms
             #endregion // VALIDATION
 
             #region ADD
-            bool success = UserBBL.Insert(user);
+            bool success = Connection.UserBBL.Insert(user);
             #endregion // ADD
 
             #region ERR_MSG

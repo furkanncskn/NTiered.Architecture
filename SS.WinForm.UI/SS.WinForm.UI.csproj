@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commen\Connection.cs" />
     <Compile Include="Forms\Add.cs">
       <SubType>Form</SubType>
     </Compile>

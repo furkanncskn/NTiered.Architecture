@@ -9,11 +9,18 @@ namespace Entity
     {
         public static string HasError(ValidationResult result)
         {
-            StringBuilder builder = new StringBuilder();
+            try
+            {
+                StringBuilder builder = new StringBuilder();
 
-            result.Errors.ForEach(error => builder.AppendLine(error.ErrorMessage));
+                result.Errors.ForEach(error => builder.AppendLine(error.ErrorMessage));
 
-            return builder.ToString();
+                return builder.ToString();
+            }
+            catch
+            {
+                return "";
+            }
         }
     }
 }
