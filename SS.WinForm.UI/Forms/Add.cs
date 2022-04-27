@@ -23,6 +23,8 @@ namespace SS.WinForm.UI.Forms
                 USER_NAME = txtName.Text,
                 USER_PASSWORD = txtPassword.Text,
                 USER_EMAIL = txtEmail.Text,
+                USER_REGISTER_DATE = DateTime.Now,
+                USER_IS_ACTIVE = true
             };
 
             ValidationResult result = new UserValidator().Validate(user);
