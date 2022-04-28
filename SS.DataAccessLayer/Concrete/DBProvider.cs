@@ -15,9 +15,6 @@ namespace SS.DataAccessLayer.Concrete
         
         private static DbProviderType _dbProviderType = DbProviderType.NullProvider;
 
-        /// <summary>
-        /// Default SqlServer
-        /// </summary>
         public static DbProviderType ProviderType { get { return _dbProviderType; } set { _dbProviderType = value; } }
         
         public static string ConnectionString 
