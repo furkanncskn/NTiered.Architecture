@@ -1,11 +1,8 @@
 ﻿using Entity.Concrete;
 using SS.BusinessLogicLayer.BBL;
 using SS.BusinessLogicLayer.Commen;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SS.DataAccessLayer.Concrete;
+using System.Configuration;
 
 namespace SS.WinForm.UI.Commen
 {
@@ -21,7 +18,7 @@ namespace SS.WinForm.UI.Commen
                 {
                     _UserBBL = new UsersBBL();
                 }
-
+                
                 return _UserBBL;
             }
         }

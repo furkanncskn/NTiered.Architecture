@@ -1,13 +1,10 @@
-﻿using Entity.Concrete;
-using SS.BusinessLogicLayer.BBL;
-using SS.BusinessLogicLayer.Commen;
-using SS.DataAccessLayer.Concrete;
-using SS.WinForm.UI.Commen;
-using SS.WinForm.UI.Forms;
-using System;
-using System.Configuration;
+﻿using System;
 using System.Data;
 using System.Windows.Forms;
+
+using SS.WinForm.UI.Forms;
+using SS.WinForm.UI.Commen;
+using SS.DataAccessLayer.Concrete;
 
 namespace SS.WinForm.UI
 {
@@ -15,8 +12,6 @@ namespace SS.WinForm.UI
     {
         public MainForm()
         {
-            DBProvider.connectionString = ConfigurationManager.ConnectionStrings["SpaceSurgeon"].ToString();
-
             InitializeComponent();
         }
 
@@ -26,14 +21,50 @@ namespace SS.WinForm.UI
             dataGridView1.DataSource = Connection.UserBBL.SelectAll();
         }
 
+        /// Mimariye uygun hale getirelecek
+        ///
         private void btnGetCount_Click(object sender, EventArgs e)
         {
-            txtSumQueryCount.Text = ((int)DBProvider.DB.ToScalerValue (
-                                        DBProvider.connectionString,
-                                            "select count(*) from Users",
-                                                CommandType.Text
+            txtSumQueryCount.Text = ((int)DbProvider.Db.ToScalerValue (
+                                                   query: "select count(*) from Users where USER_IS_ACTIVE = {0}",
+                                                    type: CommandType.Text,
+                                                    1
                                         )
                                     ).ToString();
+        }
+        
+        private void BtnDelete_Click(object sender, EventArgs e)
+        {
+            var row = dataGridView1.CurrentRow;
+
+            if (row == null) return;
+
+            var id = row.Cells["USER_ID"].Value;
+
+            if ((int)id < 1) return;
+
+            bool success = Connection.UserBBL.DeleteById((int)id);
+
+            if(success == false)
+            {
+                MessageBox.Show(
+                    "Silme işlemi gerçekleştirilemedi",
+                    "Message",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                    );
+
+                return;
+            }
+
+            dataGridView1.DataSource = Connection.UserBBL.SelectAll();
+
+            MessageBox.Show(
+                    "Silme işlemi başarılı",
+                    "Message",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                    );
         }
 
         private void btnList_Click(object sender, EventArgs e)
@@ -68,5 +99,6 @@ namespace SS.WinForm.UI
             }
         }
         #endregion
+
     }
 }
