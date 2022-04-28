@@ -1,35 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Reflection;
+﻿using System.Data;
+using System.Data.Common;
 
 namespace SS.DataAccessLayer.Abstract
 {
     public interface IDataAccess
     {
-        int NonQueryCommand(string connectionString, string command, CommandType type, params object[] parameters);
+        int NonQueryCommand(string command, CommandType type, params object[] parameters);
 
-        int NonQueryCommand(SqlCommand command, string connectionString);
+        int NonQueryCommand(DbCommand command);
 
-        DataTable TableFromQuery(string connectionString, string query, CommandType type, params object[] parameters);
+        DataTable TableFromQuery(string query, CommandType type, params object[] parameters);
         
-        DataTable TableFromQuery(SqlCommand command, string connectionString);
+        DataTable TableFromQuery(DbCommand command);
 
-        object ToScalerValue(string connectionString, string query, CommandType type, params object[] parameters);
+        object ToScalerValue(string query, CommandType type, params object[] parameters);
 
-        SqlCommand CreateCommand(CommandType type, string commandText);
+        DbCommand CreateCommand(CommandType type);
 
-        SqlCommand CreateCommand(CommandType type, SqlConnection connection);
-       
-        SqlCommand CreateCommand(CommandType type, SqlConnection connection, string commandText);
+        DbCommand CreateCommand(CommandType type,string commandText);
 
-        DataTable ToDataTable(SqlCommand command, string connectionString);
+        DataTable ToDataTable(DbCommand command);
 
-        DataTable ToDataTable(SqlCommand command, string connectionString, string query);
+        DataTable ToDataTable(DbCommand command, string query);
 
-        DataTable ToDataTable(SqlCommand command, string connectionString, string query, CommandType type);
+        DataTable ToDataTable(DbCommand command, string query, CommandType type);
 
-        DataTable ToDataTable(string connectionString, string query, CommandType type, params object[] parameters);
+        DataTable ToDataTable(string query, CommandType type, params object[] parameters);
     }
 }
