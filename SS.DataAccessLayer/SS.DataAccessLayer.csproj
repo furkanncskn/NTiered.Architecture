@@ -32,6 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -42,10 +43,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstract\IDataAccess.cs" />
+    <Compile Include="Concrete\AttributeExtensions.cs" />
+    <Compile Include="Concrete\DbFactory.cs" />
     <Compile Include="Concrete\DataAccess.cs" />
     <Compile Include="Concrete\DataConvert.cs" />
-    <Compile Include="Concrete\DBCommand.cs" />
-    <Compile Include="Concrete\DBProvider.cs" />
+    <Compile Include="Concrete\DbCommandExtensions.cs" />
+    <Compile Include="Concrete\DbProvider.cs" />
     <Compile Include="Concrete\Util.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

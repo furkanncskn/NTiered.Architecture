@@ -1,20 +1,26 @@
 ﻿using SS.DataAccessLayer.Abstract;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data.Common;
 
 namespace SS.DataAccessLayer.Concrete
 {
-    public static class DBProvider
+    public class DbProvider
     {
         private static string _connectionString = "";
 
         private static IDataAccess _dataAccess = null;
 
-        public static string connectionString 
+        private static DbConnection _connection = null;
+
+        private static DbDataAdapter _dataAdapter = null;
+        
+        private static DbProviderType _dbProviderType = DbProviderType.NullProvider;
+
+        /// <summary>
+        /// Default SqlServer
+        /// </summary>
+        public static DbProviderType ProviderType { get { return _dbProviderType; } set { _dbProviderType = value; } }
+        
+        public static string ConnectionString 
         { 
             get 
             {
@@ -26,13 +32,39 @@ namespace SS.DataAccessLayer.Concrete
             } 
         }
 
-        public static IDataAccess DB 
+        public static DbConnection Connection
+        {
+            get
+            {
+                if (_connection == null)
+                {
+                    _connection = DbFactory.CreateConnection(ProviderType);
+                }
+                
+                return _connection;
+            }
+        }
+
+        public static DbDataAdapter DataAdapter
+        {
+            get
+            {
+                if (_dataAdapter == null)
+                {
+                    _dataAdapter = DbFactory.CreateDataAdapter(ProviderType);
+                }
+
+                return _dataAdapter;
+            }
+        }
+
+        public static IDataAccess Db 
         { 
             get 
             { 
                 if (_dataAccess == null) 
-                { 
-                    _dataAccess = new DataAccess(); 
+                {
+                    _dataAccess = new DataAccess();
                 } 
                 
                 return _dataAccess; 

@@ -1,6 +1,9 @@
 ﻿using Entity.Concrete;
 using Entity.Validations;
 using FluentValidation.Results;
+using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Text;
 
 namespace Entity

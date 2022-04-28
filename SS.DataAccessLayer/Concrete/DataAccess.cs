@@ -1,52 +1,26 @@
-﻿using SS.DataAccessLayer.Abstract;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Reflection;
+﻿using System.Data;
+using System.Data.Common;
+using SS.DataAccessLayer.Abstract;
 
 namespace SS.DataAccessLayer.Concrete
 {
     public class DataAccess : IDataAccess
     {
-        public int NonQueryCommand(string connectionString, string command, CommandType type, params object[] parameters)
+        public int NonQueryCommand(string commandText, CommandType type, params object[] parameters)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                DbConnection connection = DbProvider.Connection;
+
+                connection.ConnectionString = DbProvider.ConnectionString;
+
+                using (DbCommand comm = CreateCommand(type))
                 {
-                    using (SqlCommand comm = CreateCommand(type, connection))
-                    {
-                        comm.CommandText = string.Format(command, parameters);
+                    comm.CommandText = string.Format(commandText, parameters);
 
-                        if (connection.State == ConnectionState.Closed) connection.Open();
-
-                        int affectedRow = comm.ExecuteNonQuery();
-
-                        if (connection.State == ConnectionState.Open) connection.Close();
-
-                        return affectedRow;
-                    }
-                }
-            }
-            catch
-            {
-                return 0;
-            }
-        }
-
-        public int NonQueryCommand(SqlCommand command, string connectionString)
-        {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
                     if (connection.State == ConnectionState.Closed) connection.Open();
 
-                    command.Connection = connection;
-
-                    int affectedRow = command.ExecuteNonQuery();
+                    int affectedRow = comm.ExecuteNonQuery();
 
                     if (connection.State == ConnectionState.Open) connection.Close();
 
@@ -59,34 +33,59 @@ namespace SS.DataAccessLayer.Concrete
             }
         }
 
-        public DataTable TableFromQuery(string connectionString, string query, CommandType type, params object[] parameters)
-        {
-            return ToDataTable(connectionString, query, type, parameters);
-        }
-
-        public DataTable TableFromQuery(SqlCommand command, string connectionString)
-        {
-            return ToDataTable(command, connectionString);
-        }
-
-        public object ToScalerValue(string connectionString, string query, CommandType type, params object[] parameters)
+        public int NonQueryCommand(DbCommand command)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                DbConnection connection = DbProvider.Connection;
+                 
+                connection.ConnectionString = DbProvider.ConnectionString;
+
+                if (connection.State == ConnectionState.Closed) connection.Open();
+
+                command.Connection = connection;
+
+                int affectedRow = command.ExecuteNonQuery();
+
+                if (connection.State == ConnectionState.Open) connection.Close();
+
+                return affectedRow;
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
+        public DataTable TableFromQuery(DbCommand command)
+        {
+            return ToDataTable(command);
+        }
+        
+        public DataTable TableFromQuery(string query, CommandType type, params object[] parameters)
+        {
+            return ToDataTable(query, type, parameters);
+        }
+
+        public object ToScalerValue(string query, CommandType type, params object[] parameters)
+        {
+            try
+            {
+                DbConnection connection = DbProvider.Connection;
+                
+                connection.ConnectionString = DbProvider.ConnectionString;
+
+                using (DbCommand comm = CreateCommand(type))
                 {
-                    using (SqlCommand comm = CreateCommand(type, connection))
-                    {
-                        comm.CommandText = string.Format(query, parameters);
+                    comm.CommandText = string.Format(query, parameters);
 
-                        if (connection.State == ConnectionState.Closed) connection.Open();
+                    if (connection.State == ConnectionState.Closed) connection.Open();
 
-                        object value = comm.ExecuteScalar();
+                    object value = comm.ExecuteScalar();
 
-                        if (connection.State == ConnectionState.Open) connection.Close();
+                    if (connection.State == ConnectionState.Open) connection.Close();
 
-                        return value;
-                    }
+                    return value;
                 }
             }
             catch
@@ -95,61 +94,52 @@ namespace SS.DataAccessLayer.Concrete
             }
         }
 
-        public SqlCommand CreateCommand(CommandType type, string commandText)
+        public DbCommand CreateCommand(CommandType type)
         {
-            return CreateCommand(type, null, commandText);
+            return CreateCommand(type, null);
         }
 
-        public SqlCommand CreateCommand(CommandType type, SqlConnection connection)
+        public DbCommand CreateCommand(CommandType type, string commandText)
         {
-            return CreateCommand(type, connection, null);
+            var cmd = DbProvider.Connection.CreateCommand();
+
+            cmd.CommandType = type;
+            
+            if(commandText != null) cmd.CommandText = commandText;  
+            
+            return cmd;
         }
 
-        public SqlCommand CreateCommand(CommandType type, SqlConnection connection, string commandText)
+        public DataTable ToDataTable(DbCommand command)
+        {
+            return ToDataTable(command, null, CommandType.Text);
+        }
+
+        public DataTable ToDataTable(DbCommand command, string query)
+        {
+            return ToDataTable(command, query, CommandType.Text);
+        }
+
+        public DataTable ToDataTable(DbCommand command, string query, CommandType type)
         {
             try
             {
-                SqlCommand command = new SqlCommand()
+                using (DbConnection connection = DbProvider.Connection)
                 {
-                    CommandText = commandText,
-                    CommandType = type,
-                    Connection = connection
-                };
+                    connection.ConnectionString = DbProvider.ConnectionString;
 
-                return command;
-            }
-            catch
-            {
-                return new SqlCommand();
-            }
-        }
-
-        public DataTable ToDataTable(SqlCommand command, string connectionString)
-        {
-            return ToDataTable(command, connectionString, null);
-        }
-        
-        public DataTable ToDataTable(SqlCommand command, string connectionString, string query)
-        {
-            return ToDataTable(command, connectionString, query, CommandType.Text);
-        }
-        
-        public DataTable ToDataTable(SqlCommand command, string connectionString, string query, CommandType type)
-        {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    if(query != null)
+                    if (query != null)
                         command.CommandText = query;
 
-                    if(type != CommandType.Text)
+                    if (type != CommandType.Text)
                         command.CommandType = type;
 
-                    command.Connection = connection;    
-                    
-                    using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                    command.Connection = connection;
+
+                    using (DbDataAdapter adapter = DbProvider.DataAdapter)
                     {
+                        adapter.SelectCommand = command;
+
                         DataTable table = new DataTable();
 
                         adapter.Fill(table);
@@ -167,23 +157,26 @@ namespace SS.DataAccessLayer.Concrete
             }
         }
 
-        public DataTable ToDataTable(string connectionString, string query, CommandType type, params object[] parameters)
+        public DataTable ToDataTable(string query, CommandType type, params object[] parameters)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (DbConnection connection = DbProvider.Connection)
                 {
-                    using (SqlCommand command = CreateCommand(type, connection))
+                    connection.ConnectionString = DbProvider.ConnectionString;
+
+                    using (DbCommand command = CreateCommand(type))
                     {
                         command.CommandText = string.Format(query, parameters);
-                        
-                        using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+
+                        using (DbDataAdapter adapter = DbProvider.DataAdapter)
                         {
+                            adapter.SelectCommand = command;
                             DataTable table = new DataTable();
 
                             adapter.Fill(table);
 
-                            if(Util.IsValidTable(table))
+                            if (Util.IsValidTable(table))
                                 return table;
 
                             return new DataTable();

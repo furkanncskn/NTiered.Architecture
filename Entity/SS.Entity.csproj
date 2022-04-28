@@ -46,7 +46,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstract\IEntity.cs" />
-    <Compile Include="Attribute\AttributeExtensions.cs" />
     <Compile Include="Attribute\MyAttributes.cs" />
     <Compile Include="Concrete\Users.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

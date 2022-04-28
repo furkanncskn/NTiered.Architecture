@@ -11,9 +11,7 @@ namespace Entity.Attribute
                 Func<TAttribute, TValue> valueSelector
             ) where TAttribute : System.Attribute
         {
-            var att = type.GetCustomAttributes(typeof(TAttribute), true).FirstOrDefault() as TAttribute;
-
-            if (att != null)
+            if (type.GetCustomAttributes(typeof(TAttribute), true).FirstOrDefault() is TAttribute att)
             {
                 return valueSelector(att);
             }

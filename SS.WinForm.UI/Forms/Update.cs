@@ -1,9 +1,8 @@
 ﻿using Entity.Concrete;
-using SS.DataAccessLayer.Concrete;
 using SS.WinForm.UI.Commen;
 using System;
 using System.Data;
-using System.Data.SqlClient;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace SS.WinForm.UI.Forms
@@ -48,28 +47,20 @@ namespace SS.WinForm.UI.Forms
                 USER_ID = (int)dataGridView1.CurrentRow.Cells["USER_ID"].Value,
                 USER_NAME = (string)dataGridView1.CurrentRow.Cells["USER_NAME"].Value,
                 USER_PASSWORD = (string)dataGridView1.CurrentRow.Cells["USER_PASSWORD"].Value,
-                USER_EMAIL = (string)dataGridView1.CurrentRow.Cells["USER_EMAIL"].Value
+                USER_EMAIL = (string)dataGridView1.CurrentRow.Cells["USER_EMAIL"].Value,
+                USER_IS_ACTIVE = (bool)dataGridView1.CurrentRow.Cells["USER_IS_ACTIVE"].Value,
+                USER_REGISTER_DATE = (DateTime)dataGridView1.CurrentRow.Cells["USER_REGISTER_DATE"].Value
             };
             #endregion // GET_PARAMS
 
             #region UPDATE
-            SqlCommand command = DBProvider.DB.CreateCommand(CommandType.StoredProcedure, "sp_update_User");
-
-            int result = 0;
+            user.USER_IS_ACTIVE = true;
             
-            command.AddSqlParameter("USER_ID", ParameterDirection.Input, SqlDbType.Int, user.USER_ID);
-            command.AddSqlParameter("USER_NAME", ParameterDirection.Input, SqlDbType.VarChar, user.USER_NAME);
-            command.AddSqlParameter("USER_PASSWORD", ParameterDirection.Input, SqlDbType.VarChar, user.USER_PASSWORD);
-            command.AddSqlParameter("USER_EMAIL", ParameterDirection.Input, SqlDbType.VarChar, user.USER_EMAIL);
-            command.AddSqlParameter("RETURN_VALUE", ParameterDirection.ReturnValue, SqlDbType.Int, result);
-
-            DBProvider.DB.NonQueryCommand(command, DBProvider.connectionString);
+            bool succcess = Connection.UserBBL.Update(user);
             #endregion // UPDATE
 
             #region ERR_MSG
-            int returnValue = (int)command.Parameters["RETURN_VALUE"].Value;
-            
-            if(returnValue == 0)
+            if(succcess == false)
             {
                 MessageBox.Show("Güncelleme işlemi başarısız oldu!", "Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
