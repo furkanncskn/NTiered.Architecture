@@ -21,16 +21,9 @@ namespace SS.WinForm.UI
             dataGridView1.DataSource = Connection.UserBBL.SelectAll();
         }
 
-        /// Mimariye uygun hale getirelecek
-        ///
         private void btnGetCount_Click(object sender, EventArgs e)
         {
-            txtSumQueryCount.Text = ((int)DbProvider.Db.ToScalerValue (
-                                                   query: "select count(*) from Users where USER_IS_ACTIVE = {0}",
-                                                    type: CommandType.Text,
-                                                    1
-                                        )
-                                    ).ToString();
+            txtSumQueryCount.Text = Connection.UserBBL.GetCount().ToString();
         }
         
         private void BtnDelete_Click(object sender, EventArgs e)
@@ -99,6 +92,5 @@ namespace SS.WinForm.UI
             }
         }
         #endregion
-
     }
 }

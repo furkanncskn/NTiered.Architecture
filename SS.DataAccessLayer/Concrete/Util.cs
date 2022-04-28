@@ -16,30 +16,48 @@ namespace SS.DataAccessLayer.Concrete
 
         private static readonly Dictionary<Type, DbType> typeMap;
 
-        // Create and populate the dictionary in the static constructor
         static Util()
         {
             typeMap = new Dictionary<Type, DbType>
             {
-                [typeof(string)] = DbType.String,
-                [typeof(char[])] = DbType.String,
                 [typeof(byte)] = DbType.Byte,
+                [typeof(sbyte)] = DbType.SByte,
                 [typeof(short)] = DbType.Int16,
+                [typeof(ushort)] = DbType.UInt16,
                 [typeof(int)] = DbType.Int32,
+                [typeof(uint)] = DbType.UInt32,
                 [typeof(long)] = DbType.Int64,
-                [typeof(byte[])] = DbType.Binary,
-                [typeof(bool)] = DbType.Boolean,
-                [typeof(DateTime)] = DbType.DateTime2,
-                [typeof(DateTimeOffset)] = DbType.DateTimeOffset,
-                [typeof(decimal)] = DbType.Decimal,
+                [typeof(ulong)] = DbType.UInt64,
                 [typeof(float)] = DbType.Single,
                 [typeof(double)] = DbType.Double,
-                [typeof(TimeSpan)] = DbType.Time
+                [typeof(decimal)] = DbType.Decimal,
+                [typeof(bool)] = DbType.Boolean,
+                [typeof(string)] = DbType.String,
+                [typeof(char)] = DbType.StringFixedLength,
+                [typeof(Guid)] = DbType.Guid,
+                [typeof(DateTime)] = DbType.DateTime,
+                [typeof(DateTimeOffset)] = DbType.DateTimeOffset,
+                [typeof(byte[])] = DbType.Binary,
+                [typeof(byte?)] = DbType.Byte,
+                [typeof(sbyte?)] = DbType.SByte,
+                [typeof(short?)] = DbType.Int16,
+                [typeof(ushort?)] = DbType.UInt16,
+                [typeof(int?)] = DbType.Int32,
+                [typeof(uint?)] = DbType.UInt32,
+                [typeof(long?)] = DbType.Int64,
+                [typeof(ulong?)] = DbType.UInt64,
+                [typeof(float?)] = DbType.Single,
+                [typeof(double?)] = DbType.Double,
+                [typeof(decimal?)] = DbType.Decimal,
+                [typeof(bool?)] = DbType.Boolean,
+                [typeof(char?)] = DbType.StringFixedLength,
+                [typeof(Guid?)] = DbType.Guid,
+                [typeof(DateTime?)] = DbType.DateTime,
+                [typeof(DateTimeOffset?)] = DbType.DateTimeOffset
             };
             /* ... and so on ... */
         }
 
-        // Non-generic argument-based method
         public static DbType GetDbType(Type giveType)
         {
             // Allow nullable types to be handled
@@ -53,7 +71,6 @@ namespace SS.DataAccessLayer.Concrete
             throw new ArgumentException($"{giveType.FullName} is not a supported .NET class");
         }
 
-        // Generic version
         public static DbType GetDbType<T>()
         {
             return GetDbType(typeof(T));

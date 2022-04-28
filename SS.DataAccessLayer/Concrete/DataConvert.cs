@@ -7,7 +7,7 @@ namespace SS.DataAccessLayer.Concrete
 {
     public static class DataConvert<T> where T : class, new()
     {
-        public static T TableSelectedIndexToClass(DataTable table, int idx)
+        public static T ToObjectFromTableSelectedIndex(DataTable table, int idx)
         {
             try
             {
@@ -35,9 +35,9 @@ namespace SS.DataAccessLayer.Concrete
             }
         }
 
-        public static T TableFirstRowToClass(DataTable table)
+        public static T ToObjectFromTableFirstRow(DataTable table)
         {
-            return TableSelectedIndexToClass(table, 0);
+            return ToObjectFromTableSelectedIndex(table, 0);
         }
 
         public static List<T> ToListFromDataTable(DataTable table)
@@ -53,7 +53,7 @@ namespace SS.DataAccessLayer.Concrete
 
                 for(int i = 0; i < table.Rows.Count; i++)
                 {
-                    list.Add(TableSelectedIndexToClass(table, i));
+                    list.Add(ToObjectFromTableSelectedIndex(table, i));
                 }
 
                 return list;

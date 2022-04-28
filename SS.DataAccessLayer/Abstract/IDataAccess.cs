@@ -5,15 +5,17 @@ namespace SS.DataAccessLayer.Abstract
 {
     public interface IDataAccess
     {
-        int NonQueryCommand(string command, CommandType type, params object[] parameters);
+        int NonQueryCommand(CommandType type, string commandText, params object[] parameters);
 
         int NonQueryCommand(DbCommand command);
 
-        DataTable TableFromQuery(string query, CommandType type, params object[] parameters);
+        DataTable TableFromQuery(CommandType type, string query, params object[] parameters);
         
         DataTable TableFromQuery(DbCommand command);
 
-        object ToScalerValue(string query, CommandType type, params object[] parameters);
+        object ToScalerValue(CommandType type, string query, params object[] parameters);
+
+        object ToScalerValue(DbCommand command);
 
         DbCommand CreateCommand(CommandType type);
 
@@ -23,8 +25,8 @@ namespace SS.DataAccessLayer.Abstract
 
         DataTable ToDataTable(DbCommand command, string query);
 
-        DataTable ToDataTable(DbCommand command, string query, CommandType type);
+        DataTable ToDataTable(DbCommand command, CommandType type, string query);
 
-        DataTable ToDataTable(string query, CommandType type, params object[] parameters);
+        DataTable ToDataTable(CommandType type, string query, params object[] parameters);
     }
 }
