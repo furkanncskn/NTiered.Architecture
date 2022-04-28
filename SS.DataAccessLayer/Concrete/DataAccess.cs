@@ -6,7 +6,7 @@ namespace SS.DataAccessLayer.Concrete
 {
     public class DataAccess : IDataAccess
     {
-        public int NonQueryCommand(string commandText, CommandType type, params object[] parameters)
+        public int NonQueryCommand(CommandType type, string commandText, params object[] parameters)
         {
             try
             {
@@ -62,12 +62,12 @@ namespace SS.DataAccessLayer.Concrete
             return ToDataTable(command);
         }
         
-        public DataTable TableFromQuery(string query, CommandType type, params object[] parameters)
+        public DataTable TableFromQuery(CommandType type, string query, params object[] parameters)
         {
-            return ToDataTable(query, type, parameters);
+            return ToDataTable(type, query, parameters);
         }
 
-        public object ToScalerValue(string query, CommandType type, params object[] parameters)
+        public object ToScalerValue(CommandType type, string query, params object[] parameters)
         {
             try
             {
@@ -94,6 +94,28 @@ namespace SS.DataAccessLayer.Concrete
             }
         }
 
+        public object ToScalerValue(DbCommand command)
+        {
+            try
+            {
+                DbConnection connection = DbProvider.Connection;
+
+                connection.ConnectionString = DbProvider.ConnectionString;
+
+                if (connection.State == ConnectionState.Closed) connection.Open();
+
+                object value = command.ExecuteScalar();
+
+                if (connection.State == ConnectionState.Open) connection.Close();
+
+                return value;
+            }
+            catch
+            {
+                return new object();
+            }
+        }
+
         public DbCommand CreateCommand(CommandType type)
         {
             return CreateCommand(type, null);
@@ -112,15 +134,15 @@ namespace SS.DataAccessLayer.Concrete
 
         public DataTable ToDataTable(DbCommand command)
         {
-            return ToDataTable(command, null, CommandType.Text);
+            return ToDataTable(command, CommandType.Text, null);
         }
 
         public DataTable ToDataTable(DbCommand command, string query)
         {
-            return ToDataTable(command, query, CommandType.Text);
+            return ToDataTable(command, CommandType.Text, query);
         }
 
-        public DataTable ToDataTable(DbCommand command, string query, CommandType type)
+        public DataTable ToDataTable(DbCommand command, CommandType type, string query)
         {
             try
             {
@@ -157,7 +179,7 @@ namespace SS.DataAccessLayer.Concrete
             }
         }
 
-        public DataTable ToDataTable(string query, CommandType type, params object[] parameters)
+        public DataTable ToDataTable(CommandType type, string query, params object[] parameters)
         {
             try
             {
