@@ -12,5 +12,6 @@ namespace SS.BusinessLogicLayer.Commen
         bool Update(T entity);
         bool DeleteById(int id);    
         bool DeleteAll();
+        int GetCount();
     }
 }

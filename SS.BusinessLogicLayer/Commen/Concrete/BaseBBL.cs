@@ -100,7 +100,7 @@ namespace SS.BusinessLogicLayer.Commen
         {
             DataTable table = SelectByIdToTable(id);
 
-            return DataConvert<T>.TableFirstRowToClass(table);
+            return DataConvert<T>.ToObjectFromTableFirstRow(table);
         }
 
         /// <summary>
@@ -269,6 +269,40 @@ namespace SS.BusinessLogicLayer.Commen
             catch
             {
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// String.Format("sp_get_count_{0}", name)
+        /// </summary>
+        /// <returns></returns>
+        public int GetCount()
+        {
+            try
+            {
+                Type type = typeof (T);
+
+                string name = type.GetAttributeValue((TableAttribute info) => info.Name);
+
+                if(name == null) { throw new NullReferenceException(); }
+
+                using (DbCommand command = DbProvider.Db.CreateCommand(
+                        type: CommandType.StoredProcedure,
+                        commandText: String.Format("sp_get_count_{0}", name)
+                    ))
+                {
+                    if (command == null) throw new NullReferenceException();
+
+                    var returnValue = command.AddDbParameter(ParameterDirection.ReturnValue, DbType.Int32);
+
+                    DbProvider.Db.NonQueryCommand(command);
+
+                    return (int)returnValue.Value;
+                };
+            }
+            catch
+            {
+                return 0;
             }
         }
     }

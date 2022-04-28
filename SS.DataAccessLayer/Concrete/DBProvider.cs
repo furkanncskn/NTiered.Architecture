@@ -3,6 +3,9 @@ using System.Data.Common;
 
 namespace SS.DataAccessLayer.Concrete
 {
+    // DataAccessLater katmanından hizmet alacak servisler
+    // Connection string ve SqlDbType objelerini uygun ifadelerle 
+    // doldurması gerekmektedir!!
     public class DbProvider
     {
         private static string _connectionString = "";
