@@ -10,21 +10,20 @@ namespace SS.DataAccessLayer.Concrete
         {
             try
             {
-                DbConnection connection = DbProvider.Connection;
-
-                connection.ConnectionString = DbProvider.ConnectionString;
-
-                using (DbCommand comm = CreateCommand(type))
+                using (DbConnection connection = DbProvider.Connection) 
                 {
-                    comm.CommandText = string.Format(commandText, parameters);
+                    using (DbCommand comm = CreateCommand(type))
+                    {
+                        comm.CommandText = string.Format(commandText, parameters);
 
-                    if (connection.State == ConnectionState.Closed) connection.Open();
+                        if (connection.State == ConnectionState.Closed) connection.Open();
 
-                    int affectedRow = comm.ExecuteNonQuery();
+                        int affectedRow = comm.ExecuteNonQuery();
 
-                    if (connection.State == ConnectionState.Open) connection.Close();
+                        if (connection.State == ConnectionState.Open) connection.Close();
 
-                    return affectedRow;
+                        return affectedRow;
+                    }
                 }
             }
             catch
@@ -37,19 +36,18 @@ namespace SS.DataAccessLayer.Concrete
         {
             try
             {
-                DbConnection connection = DbProvider.Connection;
-                 
-                connection.ConnectionString = DbProvider.ConnectionString;
+                using (DbConnection connection = DbProvider.Connection) 
+                {
+                    if (connection.State == ConnectionState.Closed) connection.Open();
 
-                if (connection.State == ConnectionState.Closed) connection.Open();
+                    command.Connection = connection;
 
-                command.Connection = connection;
+                    int affectedRow = command.ExecuteNonQuery();
 
-                int affectedRow = command.ExecuteNonQuery();
+                    if (connection.State == ConnectionState.Open) connection.Close();
 
-                if (connection.State == ConnectionState.Open) connection.Close();
-
-                return affectedRow;
+                    return affectedRow;
+                }
             }
             catch
             {
@@ -71,21 +69,20 @@ namespace SS.DataAccessLayer.Concrete
         {
             try
             {
-                DbConnection connection = DbProvider.Connection;
-                
-                connection.ConnectionString = DbProvider.ConnectionString;
-
-                using (DbCommand comm = CreateCommand(type))
+                using (DbConnection connection = DbProvider.Connection)
                 {
-                    comm.CommandText = string.Format(query, parameters);
+                    using (DbCommand comm = CreateCommand(type))
+                    {
+                        comm.CommandText = string.Format(query, parameters);
 
-                    if (connection.State == ConnectionState.Closed) connection.Open();
+                        if (connection.State == ConnectionState.Closed) connection.Open();
 
-                    object value = comm.ExecuteScalar();
+                        object value = comm.ExecuteScalar();
 
-                    if (connection.State == ConnectionState.Open) connection.Close();
+                        if (connection.State == ConnectionState.Open) connection.Close();
 
-                    return value;
+                        return value;
+                    }
                 }
             }
             catch
@@ -98,17 +95,16 @@ namespace SS.DataAccessLayer.Concrete
         {
             try
             {
-                DbConnection connection = DbProvider.Connection;
+                using (DbConnection connection = DbProvider.Connection)
+                {
+                    if (connection.State == ConnectionState.Closed) connection.Open();
 
-                connection.ConnectionString = DbProvider.ConnectionString;
+                    object value = command.ExecuteScalar();
 
-                if (connection.State == ConnectionState.Closed) connection.Open();
+                    if (connection.State == ConnectionState.Open) connection.Close();
 
-                object value = command.ExecuteScalar();
-
-                if (connection.State == ConnectionState.Open) connection.Close();
-
-                return value;
+                    return value;
+                }
             }
             catch
             {
@@ -148,8 +144,6 @@ namespace SS.DataAccessLayer.Concrete
             {
                 using (DbConnection connection = DbProvider.Connection)
                 {
-                    connection.ConnectionString = DbProvider.ConnectionString;
-
                     if (query != null)
                         command.CommandText = query;
 
@@ -185,8 +179,6 @@ namespace SS.DataAccessLayer.Concrete
             {
                 using (DbConnection connection = DbProvider.Connection)
                 {
-                    connection.ConnectionString = DbProvider.ConnectionString;
-
                     using (DbCommand command = CreateCommand(type))
                     {
                         command.CommandText = string.Format(query, parameters);

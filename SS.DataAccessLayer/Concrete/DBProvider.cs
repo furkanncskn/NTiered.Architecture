@@ -41,6 +41,8 @@ namespace SS.DataAccessLayer.Concrete
                     _connection = DbFactory.CreateConnection(ProviderType);
                 }
                 
+                _connection.ConnectionString = ConnectionString;
+
                 return _connection;
             }
         }
