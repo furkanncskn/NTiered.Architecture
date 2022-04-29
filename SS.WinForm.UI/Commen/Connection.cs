@@ -1,8 +1,6 @@
 ﻿using Entity.Concrete;
 using SS.BusinessLogicLayer.BBL;
 using SS.BusinessLogicLayer.Commen;
-using SS.DataAccessLayer.Concrete;
-using System.Configuration;
 
 namespace SS.WinForm.UI.Commen
 {
