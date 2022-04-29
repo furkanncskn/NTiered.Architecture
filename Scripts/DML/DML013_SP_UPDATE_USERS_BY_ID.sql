@@ -1,19 +1,15 @@
-/*************************************************************
-Object: Stored Procedure
-Author: Furkan Coþkun
-Script Date: April 25, 2022
-Description: Update user informations
-**************************************************************/
-CREATE OR ALTER PROCEDURE sp_update_user
+CREATE OR ALTER PROCEDURE sp_update_users_by_id
 (
-	@USER_ID int,
-	@USER_NAME varchar(150),
-	@USER_PASSWORD varchar(150),
-	@USER_EMAIL varchar(150)
+	@USER_ID INT,
+	@USER_NAME VARCHAR(150),
+	@USER_PASSWORD VARCHAR(150),
+	@USER_EMAIL VARCHAR(150),
+	@USER_REGISTER_DATE DATETIME,
+	@USER_IS_ACTIVE BIT
 )
 AS BEGIN
 BEGIN TRY
-	
+
 	DECLARE @prev_xstate int = XACT_STATE()
 	
 	IF @prev_xstate = -1 
@@ -22,22 +18,22 @@ BEGIN TRY
 		BEGIN TRANSACTION
 	ELSE 
 		SAVE TRANSACTION sp_update_user
-	
+
 	UPDATE Users 
 	SET 
-		USER_NAME = @USER_NAME,
-		USER_PASSWORD = @USER_PASSWORD,
-		USER_EMAIL = @USER_EMAIL
-	WHERE 
-		USER_ID = @USER_ID
-	
+		USER_NAME = @USER_NAME, 
+		USER_PASSWORD = USER_PASSWORD, 
+		USER_EMAIL = @USER_EMAIL,
+		USER_REGISTER_DATE = @USER_REGISTER_DATE,
+		USER_IS_ACTIVE = @USER_IS_ACTIVE
+	WHERE
+	USER_ID = @USER_ID
+
 	DECLARE @curr_xstate int = XACT_STATE()
 	
 	IF @curr_xstate = 1
 		COMMIT TRANSACTION
 	
-	RETURN 1
-
 END TRY
 BEGIN CATCH
 	
@@ -49,8 +45,6 @@ BEGIN CATCH
 		ROLLBACK TRANSACTION
 	ELSE IF @curr_xstate = 1 AND @prev_xstate = 1
 		ROLLBACK TRANSACTION sp_update_user
-
-	RETURN 0
 
 END CATCH
 END
