@@ -45,6 +45,7 @@
     <Compile Include="BBL\UsersBBL.cs" />
     <Compile Include="Commen\Abstract\IBBL.cs" />
     <Compile Include="Commen\Concrete\BaseBBL.cs" />
+    <Compile Include="Providers\UserProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

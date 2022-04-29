@@ -18,7 +18,11 @@ namespace SS.DataAccessLayer.Concrete
         
         private static DbProviderType _dbProviderType = DbProviderType.NullProvider;
 
-        public static DbProviderType ProviderType { get { return _dbProviderType; } set { _dbProviderType = value; } }
+        public static DbProviderType ProviderType 
+        { 
+            get { return _dbProviderType; } 
+            set { _dbProviderType = value; } 
+        }
         
         public static string ConnectionString 
         { 
@@ -70,10 +74,6 @@ namespace SS.DataAccessLayer.Concrete
                 } 
                 
                 return _dataAccess; 
-            } 
-            set 
-            { 
-                _dataAccess = value; 
             } 
         }
     }

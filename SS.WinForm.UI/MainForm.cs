@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Data;
 using System.Windows.Forms;
 
 using SS.WinForm.UI.Forms;
-using SS.WinForm.UI.Commen;
-using SS.DataAccessLayer.Concrete;
+using SS.BusinessLogicLayer.Provider;
 
 namespace SS.WinForm.UI
 {
@@ -18,12 +16,12 @@ namespace SS.WinForm.UI
         #region EventHandler
         private void btnGetAll_Click(object sender, EventArgs e)
         {
-            dataGridView1.DataSource = Connection.UserBBL.SelectAll();
+            dataGridView1.DataSource = UserProvider.UserBBL.SelectAll();
         }
 
         private void btnGetCount_Click(object sender, EventArgs e)
         {
-            txtSumQueryCount.Text = Connection.UserBBL.GetCount().ToString();
+            txtSumQueryCount.Text = UserProvider.UserBBL.GetCount().ToString();
         }
         
         private void BtnDelete_Click(object sender, EventArgs e)
@@ -36,7 +34,7 @@ namespace SS.WinForm.UI
 
             if ((int)id < 1) return;
 
-            bool success = Connection.UserBBL.DeleteById((int)id);
+            bool success = UserProvider.UserBBL.DeleteById((int)id);
 
             if(success == false)
             {
@@ -50,7 +48,7 @@ namespace SS.WinForm.UI
                 return;
             }
 
-            dataGridView1.DataSource = Connection.UserBBL.SelectAll();
+            dataGridView1.DataSource = UserProvider.UserBBL.SelectAll();
 
             MessageBox.Show(
                     "Silme işlemi başarılı",

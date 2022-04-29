@@ -1,9 +1,9 @@
-﻿using Entity.Concrete;
-using SS.WinForm.UI.Commen;
-using System;
+﻿using System;
 using System.Data;
-using System.Linq;
 using System.Windows.Forms;
+
+using Entity.Concrete;
+using SS.BusinessLogicLayer.Provider;
 
 namespace SS.WinForm.UI.Forms
 {
@@ -22,7 +22,7 @@ namespace SS.WinForm.UI.Forms
 
         private void btnGet_Click(object sender, EventArgs e)
         {
-            DataTable table = Connection.UserBBL.SelectByIdToTable(Convert.ToInt32(txtId.Text));
+            DataTable table = UserProvider.UserBBL.SelectByIdToTable(Convert.ToInt32(txtId.Text));
 
             if (!(table.Rows.Count > 0))
             {
@@ -56,7 +56,7 @@ namespace SS.WinForm.UI.Forms
             #region UPDATE
             user.USER_IS_ACTIVE = true;
             
-            bool succcess = Connection.UserBBL.Update(user);
+            bool succcess = UserProvider.UserBBL.Update(user);
             #endregion // UPDATE
 
             #region ERR_MSG

@@ -1,9 +1,10 @@
-﻿using Entity.Concrete;
+﻿using System;
+using System.Windows.Forms;
+
+using Entity.Concrete;
 using Entity.Validations;
 using FluentValidation.Results;
-using SS.WinForm.UI.Commen;
-using System;
-using System.Windows.Forms;
+using SS.BusinessLogicLayer.Provider;
 
 namespace SS.WinForm.UI.Forms
 {
@@ -45,7 +46,7 @@ namespace SS.WinForm.UI.Forms
             #endregion // VALIDATION
 
             #region ADD
-            bool success = Connection.UserBBL.Insert(user);
+            bool success = UserProvider.UserBBL.Insert(user);
             #endregion // ADD
 
             #region ERR_MSG

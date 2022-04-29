@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Linq;
 using System.Reflection;
+using System.Data.Common;
+using System.Collections.Generic;
+
 using Entity.Attribute;
 using SS.DataAccessLayer.Concrete;
-using System.Linq;
-using System.Data.Common;
 
 namespace SS.BusinessLogicLayer.Commen
 {
@@ -107,7 +107,7 @@ namespace SS.BusinessLogicLayer.Commen
         }
 
         /// <summary>
-        /// string.Format("sp_update_{0}_by_id", name), Stored Procedure
+        /// String.Format("sp_update_{0}_by_id", name), Stored Procedure
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
@@ -241,7 +241,7 @@ namespace SS.BusinessLogicLayer.Commen
 
                 using (DbCommand command = DbProvider.Db.CreateCommand(
                         type: CommandType.StoredProcedure,
-                        commandText: string.Format(templateCommandText, name)
+                        commandText: String.Format(templateCommandText, name)
                     ))
                 {
                     if (command == null) throw new NullReferenceException();

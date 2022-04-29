@@ -1,8 +1,9 @@
-﻿using Entity.Concrete;
-using SS.WinForm.UI.Commen;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Windows.Forms;
+using System.Collections.Generic;
+
+using Entity.Concrete;
+using SS.BusinessLogicLayer.Provider;
 
 namespace SS.WinForm.UI.Forms
 {
@@ -33,7 +34,7 @@ namespace SS.WinForm.UI.Forms
         #region EventHandler
         private void ListForm_Load(object sender, EventArgs e)
         {
-            List<Users> users = Connection.UserBBL.SelectAll();
+            List<Users> users = UserProvider.UserBBL.SelectAll();
 
             AddListToListBox(users);
         }
