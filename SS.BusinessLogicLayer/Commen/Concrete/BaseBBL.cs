@@ -22,18 +22,19 @@ namespace SS.BusinessLogicLayer.Commen
             {
                 var type = typeof(T);
 
-                string name = typeof(T).GetAttributeValue((TableAttribute info) => info.Name);
+                string name = GetEntityName(type);   
 
-                if (name == null) throw new Exception();
+                using (DbCommand command = DbProvider.Db.CreateCommand(
+                              type: CommandType.Text,
+                              commandText: String.Format("select * from v_get_all_{0}", type.Name)
+                          ))
+                {
+                    if (command == null) throw new NullReferenceException();
 
-                DbCommand command = DbProvider.Db.CreateCommand(
-                            type: CommandType.Text,
-                            commandText: String.Format("select * from v_get_all_{0}", type.Name)
-                        );
-                
-                var table = DbProvider.Db.TableFromQuery(command);
-
-                return DataConvert<T>.ToListFromDataTable(table);
+                    var table = DbProvider.Db.TableFromQuery(command);
+                    
+                    return DataConvert<T>.ToListFromDataTable(table);
+                };
             }
             catch 
             {
@@ -52,34 +53,26 @@ namespace SS.BusinessLogicLayer.Commen
             {
                 Type type = typeof(T);
 
-                string name = typeof(T).GetAttributeValue((TableAttribute info) => info.Name);
-
-                if (name == null) throw new Exception();
+                string name = GetEntityName(type);
 
                 using (DbCommand command = DbProvider.Db.CreateCommand(
                             type: CommandType.StoredProcedure,
                             commandText: String.Format("sp_get_{0}_by_id", name)
                         ))
                 {
-                    string KeyName = null;
+                    if (command == null) throw new NullReferenceException();
 
-                    PropertyInfo[] properties = type.GetProperties();
+                    string KeyName = type.GetProperties()
+                        .Where(p => p.IsThereAnAttribute(typeof(KeyAttribute)) == true)
+                        .FirstOrDefault().Name;
 
-                    foreach (PropertyInfo property in properties)
-                    {
-                        if (property.IsThereAnAttribute(typeof(KeyAttribute)))
-                        {
-                            KeyName = property.Name;
-                        }
-                    }
-
-                    if (KeyName == null) { throw new Exception(); }
+                    if (KeyName == null) { throw new NullReferenceException(); }
 
                     command.AddDbParameter(
-                            KeyName,
-                            ParameterDirection.Input,
-                            DbType.Int64,
-                            id
+                            name: KeyName,
+                            direction: ParameterDirection.Input,
+                            type: DbType.Int64,
+                            value: id
                         );
 
                     return DbProvider.Db.TableFromQuery(command);
@@ -110,97 +103,17 @@ namespace SS.BusinessLogicLayer.Commen
         /// <returns></returns>
         public bool Insert(T entity)
         {
-            try
-            {
-                Type type = typeof(T);
-
-                string name = type.GetAttributeValue((TableAttribute info) => info.Name);
-
-                if (name == null) { throw new Exception(); }
-
-                PropertyInfo[] properties = type.GetProperties();
-                
-                if (properties.Length == 0) { throw new Exception(); }
-
-                using (DbCommand command = DbProvider.Db.CreateCommand(
-                        type: CommandType.StoredProcedure,
-                        commandText: String.Format("sp_insert_{0}", name)
-                   ))
-                {
-                    Type[] propertyTypes = properties.Select(p => p.PropertyType).ToArray();
-
-                    object[] propertyValues = properties.Select(p => p.GetValue(entity)).ToArray();
-
-                    for (int i = 0; i < properties.Length; i++)
-                    {
-                        if(properties[i].IsThereAnAttribute(typeof(KeyAttribute))== true)
-                        {
-                            continue;
-                        }
-
-                        command.AddDbParameter(
-                                name: properties[i].Name, 
-                                direction: ParameterDirection.Input,
-                                type: Util.GetDbType(propertyTypes[i]), 
-                                value: propertyValues[i] ?? DBNull.Value
-                            );
-                    }
-
-                    return DbProvider.Db.NonQueryCommand(command) > 0;
-                }
-            }
-            catch
-            {
-                return false;
-            }
+            return UpdateAndInsert(entity, "sp_insert_{0}");
         }
 
         /// <summary>
-        /// string.Format("sp_update_{0}_by_id", Stored Procedure
+        /// string.Format("sp_update_{0}_by_id", name), Stored Procedure
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
         public bool Update(T entity)
         {
-            try
-            {
-                Type type = typeof(T);
-
-                string name = type.GetAttributeValue((TableAttribute info) => info.Name);
-
-                if (name == null) { throw new Exception(); }
-
-                PropertyInfo[] properties = type.GetProperties();
-
-                if (properties.Length == 0) { throw new Exception(); }
-
-                using (DbCommand command = DbProvider.Db.CreateCommand(
-                        type: CommandType.StoredProcedure,
-                        commandText: String.Format("sp_update_{0}_by_id", name)
-                    ))
-                {
-                    Type[] propertyTypes = properties.Select(p => p.PropertyType).ToArray();
-
-                    object[] propertyValues = properties.Select(p => p.GetValue(entity)).ToArray();
-
-                    for (int i = 0; i < propertyValues.Length; i++)
-                    {
-
-                        command.AddDbParameter(
-                                name: properties[i].Name,
-                                direction: ParameterDirection.Input,
-                                type: Util.GetDbType(propertyTypes[i]),
-                                value: propertyValues[i] ?? DBNull.Value
-                            );
-                    }
-
-                    return DbProvider.Db.NonQueryCommand(command) > 0;
-                }
-            }
-            catch
-            {
-                return false;
-            }
+            return UpdateAndInsert(entity, "sp_update_{0}_by_id");
         }
 
         /// <summary>
@@ -214,25 +127,27 @@ namespace SS.BusinessLogicLayer.Commen
             {
                 Type type = typeof(T);
 
-                string name = type.GetAttributeValue((TableAttribute info) => info.Name);
-
-                if (name == null) { throw new Exception(); }
+                string name = GetEntityName(type);   
 
                 using (DbCommand command = DbProvider.Db.CreateCommand(
                         type: CommandType.StoredProcedure,
                         commandText: String.Format("sp_delete_{0}_by_id", name)
                     ))
                 {
+                    if (command == null) throw new NullReferenceException();
+
                     PropertyInfo property = type.GetProperties()
-                        .Where(p => p.IsThereAnAttribute(typeof(KeyAttribute)) == true).FirstOrDefault();
+                        .Where(p => p.IsThereAnAttribute(typeof(KeyAttribute)) == true)
+                        .FirstOrDefault();
 
                     if (property == null) { throw new Exception(); }
 
                     command.AddDbParameter(
-                        name: property.Name,
-                        direction: ParameterDirection.Input,
-                        type: Util.GetDbType(property.PropertyType),
-                        value: id);
+                            name: property.Name,
+                            direction: ParameterDirection.Input,
+                            type: Util.GetDbType(property.PropertyType),
+                            value: id
+                        );
 
                     return DbProvider.Db.NonQueryCommand(command) > 0;
                 }
@@ -254,15 +169,15 @@ namespace SS.BusinessLogicLayer.Commen
             {
                 Type type = typeof(T);
 
-                string name = type.GetAttributeValue((TableAttribute info) => info.Name);
-
-                if (name == null) { throw new Exception(); }
+                string name = GetEntityName(type);
 
                 using(DbCommand command = DbProvider.Db.CreateCommand(
                         type: CommandType.StoredProcedure,
                         commandText: String.Format("sp_delete_all_{0}", name)
                     ))
                 {
+                    if (command == null) throw new NullReferenceException();
+
                     return DbProvider.Db.NonQueryCommand(command) > 0;
                 }
             }
@@ -282,9 +197,7 @@ namespace SS.BusinessLogicLayer.Commen
             {
                 Type type = typeof (T);
 
-                string name = type.GetAttributeValue((TableAttribute info) => info.Name);
-
-                if(name == null) { throw new NullReferenceException(); }
+                string name = GetEntityName(type);
 
                 using (DbCommand command = DbProvider.Db.CreateCommand(
                         type: CommandType.StoredProcedure,
@@ -293,7 +206,10 @@ namespace SS.BusinessLogicLayer.Commen
                 {
                     if (command == null) throw new NullReferenceException();
 
-                    var returnValue = command.AddDbParameter(ParameterDirection.ReturnValue, DbType.Int32);
+                    var returnValue = command.AddDbParameter(
+                            direction: ParameterDirection.ReturnValue, 
+                            type:DbType.Int32
+                        );
 
                     DbProvider.Db.NonQueryCommand(command);
 
@@ -304,6 +220,72 @@ namespace SS.BusinessLogicLayer.Commen
             {
                 return 0;
             }
+        }
+
+        /// <summary>
+        /// Commen insert and update code 
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="templateCommandText">
+        /// Update: ["sp_update_{0}_by_id", name]
+        /// Insert: ["sp_insert_{0}", name]
+        /// </param>
+        /// <returns></returns>
+        private static bool UpdateAndInsert(T entity, string templateCommandText)
+        {
+            try
+            {
+                Type type = typeof(T);
+
+                string name = GetEntityName(type);
+
+                using (DbCommand command = DbProvider.Db.CreateCommand(
+                        type: CommandType.StoredProcedure,
+                        commandText: string.Format(templateCommandText, name)
+                    ))
+                {
+                    if (command == null) throw new NullReferenceException();
+                    
+                    PropertyInfo[] properties = type.GetProperties();
+                    
+                    if (properties.Length == 0) { throw new ArgumentOutOfRangeException(); }
+
+                    Type[] propertyTypes = properties.Select(p => p.PropertyType).ToArray();
+
+                    object[] propertyValues = properties.Select(p => p.GetValue(entity)).ToArray();
+
+                    for (int i = 0; i < propertyValues.Length; i++)
+                    {
+                        command.AddDbParameter(
+                                name: properties[i].Name,
+                                direction: ParameterDirection.Input,
+                                type: Util.GetDbType(propertyTypes[i]),
+                                value: propertyValues[i] ?? DBNull.Value
+                            );
+                    }
+
+                    return DbProvider.Db.NonQueryCommand(command) > 0;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Get entity name
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        private static string GetEntityName(Type type)
+        {
+            string name = type.GetAttributeValue((TableAttribute info) => info.Name);
+
+            if (name == null) { throw new Exception(); }
+
+            return name;
         }
     }
 }
