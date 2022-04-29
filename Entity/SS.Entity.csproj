@@ -49,7 +49,7 @@
     <Compile Include="Attribute\MyAttributes.cs" />
     <Compile Include="Concrete\Users.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Util.cs" />
+    <Compile Include="Concrete\Util.cs" />
     <Compile Include="Validations\UserValidator.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
-
-using SS.WinForm.UI.Forms;
 using SS.BusinessLogicLayer.Provider;
 
-namespace SS.WinForm.UI
+namespace SS.WinForm.UI.Forms
 {
     public partial class MainForm : Form
     {

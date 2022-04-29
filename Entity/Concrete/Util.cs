@@ -1,7 +1,7 @@
-﻿using FluentValidation.Results;
-using System.Text;
+﻿using System.Text;
+using FluentValidation.Results;
 
-namespace Entity
+namespace Entity.Concrete
 {
     public static class Util
     {

@@ -1,5 +1,5 @@
 ﻿
-namespace SS.WinForm.UI
+namespace SS.WinForm.UI.Forms
 {
     partial class MainForm
     {
